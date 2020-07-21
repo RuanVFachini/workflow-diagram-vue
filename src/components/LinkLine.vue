@@ -1,84 +1,55 @@
 <template>
+  <g id="div-link">
+    <rect
+      :x="getLinePos().x1 - 6.5"
+      :y="getLinePos().y1 - 6.5"
+      width="13"
+      height="13"
+      rx="1"
+      style="fill:black"
+    />
     <line
-        :x1="getP1Node.x" 
-        :y1="getP1Node.y" 
-        :x2="getP2Node.x" 
-        :y2="getP2Node.y" 
-        :style="lineStyle"/>
+      :x1="getLinePos().x1"
+      :y1="getLinePos().y1"
+      :x2="getLinePos().x2"
+      :y2="getLinePos().y2"
+      style="stroke:black;stroke-width:4"
+    />
+    <rect
+      :x="getLinePos().x2 - 6.5"
+      :y="getLinePos().y2 - 6.5"
+      width="13"
+      height="13"
+      rx="1"
+      style="fill:black"
+    />
+  </g>
 </template>
 
 <script>
 export default {
-  name: 'LinkLine',
-  props: ['p1','p2','width','height'],
+  name: "LinkLine",
+  props: ["value"],
+  methods: {
+    getLinePos() {
+      console.log(this.value.input.action.y);
 
-  computed: {
-    getP1Coordenadas() {
+      let calcX1 = this.value.input.action.x + this.value.input.posRel.x + 6.5;
+      let calcY1 = this.value.input.action.y + this.value.input.posRel.y + 6.5;
+
+      let calcX2 =
+        this.value.output.action.x + this.value.output.posRel.x + 6.5;
+
+      let calcY2 =
+        this.value.output.action.y + this.value.output.posRel.y + 6.5;
 
       return {
-        x: this.p1.x + (this.width/2),
-        y: this.p1.y + (this.height/2)
-      }
+        x1: calcX1,
+        y1: calcY1,
+        x2: calcX2,
+        y2: calcY2,
+      };
     },
-    getP2Coordenadas() {
-      return {
-        x: this.p2.x + (this.width/2),
-        y: this.p2.y + (this.height/2)
-      }
-    },
-
-    getP1Node() {
-      const midwidth = (this.width / 2)
-      // const midheight = (this.height / 2)
-      const p1Coor = this.getP1Coordenadas
-      const p2Coor = this.getP2Coordenadas
-      const node = {}
-      if(p1Coor.x < p2Coor.x) {
-        node.x = p1Coor.x + midwidth
-      } else {
-        node.x = p1Coor.x - midwidth
-      }
-      node.y = p1Coor.y
-      return node
-    },
-
-    getP2Node() {
-      const midwidth = (this.width / 2)
-      // const midheight = (this.height / 2)
-      const p1Coor = this.getP1Coordenadas
-      const p2Coor = this.getP2Coordenadas
-      const node = {}
-      if(p1Coor.x < p2Coor.x) {
-        node.x = p2Coor.x - midwidth
-      } else {
-        node.x = p2Coor.x + midwidth
-      }
-      node.y = p2Coor.y
-      return node
-    },
-
-    getInputArrow() {
-      const p1Coor = this.getP1Node
-      // const p2Coor = this.getP2Node
-      const p1X = p1Coor.x
-      const p1Y = p1Coor.y
-      const p2X = p1Coor.x
-      const p2Y = p1Coor.y
-      const p3X = p1Coor.x
-      const p3Y = p1Coor.y
-      
-      return `${p1X},${p1Y} ${p2X},${p2Y} ${p3X},${p3Y}`
-    },
-
-    lineStyle() {
-      if (this.p2.level == 'principal') {
-        return "stroke:blue;stroke-width:4"
-      } else if (this.p2.level == 'alternativo') {
-        return "stroke:green;stroke-width:4"
-      }
-      return "stroke:yellow;stroke-width:4"
-      
-    }
-  }
-}
+  },
+};
 </script>

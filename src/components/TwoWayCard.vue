@@ -2,8 +2,8 @@
   <foreignObject
     :x="value.x"
     :y="value.y"
-    :width="250"
-    :height="130"
+    :width="width"
+    :height="height"
     @mousedown.prevent="select($event)"
     @mousemove="$emit('move', $event)"
     @mouseup="$emit('unselect')"
@@ -62,19 +62,14 @@ export default {
     },
 
     clickPort(event, type, port) {
-      let customEvent;
-      if (port.selected) {
-        delete port.selected;
-        customEvent = null;
-      } else {
-        this.value.cardWidth = this.width;
-        this.value.cardHeight = this.height;
-        customEvent = {
-          action: this.value,
-          port: port,
-        };
-      }
-
+      const customEvent = {
+        action: this.value,
+        port: port,
+        posRel: {
+          x: event.target.getClientRects()[0].x - this.value.x,
+          y: event.target.getClientRects()[0].y - this.value.y,
+        },
+      };
       this.$emit(`click-${type}`, customEvent);
     },
   },
