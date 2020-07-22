@@ -1,41 +1,41 @@
 <template>
   <div id="main-container">
     <b-nav class="p-1">
-      <b-btn active @click="Clear">Limpar</b-btn>
+      <b-btn active @click="trasnlateToInit">Inicio</b-btn>
+      <b-btn active @click="Clear" class="ml-2">Limpar</b-btn>
       <b-btn active @click="Add" class="ml-2">Adicionar</b-btn>
     </b-nav>
     <div class="body-container">
       <svg
         id="main-grid"
-        @mousewheel.prevent="zoom($event)"
-        @mousedown.prevent="panViewStart($event)"
-        @mousemove.prevent="panViewMove($event)"
+        @mousedown.prevent="mouseDown($event)"
+        @mousemove.prevent="mouseMove($event)"
+        @mouseleave.prevent="unselect"
         @mouseup.prevent="unselect"
       >
-        <g id="main-svg-pan" :transform="getSvgPosition">
-          <line x1="0" y1="10" x2="10" y2="0" />
-          <g id="main-svg-zoom">
-            <TwoWayCard
-              v-for="action in actions"
-              :key="action.name"
-              :value="action"
-              height="110"
-              width="200"
-              @move="move($event)"
-              @select="select($event)"
-              @unselect="unselect"
-              @open="openEdit($event)"
-              @click-input="setSelectedPort($event, 'input')"
-              @click-output="setSelectedPort($event, 'output')"
-            />
-            <LinkLine
-              v-for="link in links"
-              :key="link.id"
-              :value="link"
-              @select-line="setSelectedLine($event)"
-            />
-          </g>
-        </g>
+        <TwoWayCard
+          v-for="action in actions"
+          :key="action.name"
+          :value="action"
+          :scale="1"
+          :origin="svg"
+          height="110"
+          width="200"
+          @move="move($event)"
+          @select="select($event)"
+          @unselect="unselect"
+          @open="openEdit($event)"
+          @click-input="setSelectedPort($event, 'input')"
+          @click-output="setSelectedPort($event, 'output')"
+        />
+        <LinkLine
+          v-for="link in links"
+          :key="link.id"
+          :value="link"
+          :scale="1"
+          :origin="svg"
+          @select-line="setSelectedLine($event)"
+        />
       </svg>
       <LigaturesMap :values="links" @drop-item="dropLink($event)" />
     </div>
@@ -76,6 +76,7 @@ export default {
         y: 0,
       },
       selectedLine: null,
+      midleMouseBtnPress: false,
     };
   },
 
@@ -105,8 +106,8 @@ export default {
             value: null,
           },
         ],
-        x: 50,
-        y: 50,
+        x: -this.svg.x + 100,
+        y: -this.svg.y + 100,
       };
 
       this.actions.push(newAct);
@@ -219,8 +220,21 @@ export default {
       } else if (event.wheelDelta < 0 && this.scale > 0.3) {
         this.scale -= 0.1;
       }
-      const svgZoom = document.getElementById("main-svg-zoom");
-      svgZoom.style.transform = `scale(${this.scale})`;
+    },
+
+    mouseDown(event) {
+      this.panViewStart(event);
+
+      if (event.button == 1 && event.buttons == 4) {
+        if (this.midleMouseBtnPress) {
+          this.trasnlateToInit();
+        }
+
+        this.midleMouseBtnPress = true;
+        setTimeout(() => {
+          this.midleMouseBtnPress = false;
+        }, 300);
+      }
     },
 
     panViewStart(event) {
@@ -232,6 +246,10 @@ export default {
         x: event.x,
         y: event.y,
       };
+    },
+
+    mouseMove(event) {
+      this.panViewMove(event);
     },
 
     panViewMove(event) {
@@ -251,6 +269,11 @@ export default {
         this.svg.y = updateValueY;
         this.prevPanPos.y = event.y;
       }
+    },
+
+    trasnlateToInit() {
+      this.svg.x = 0;
+      this.svg.y = 0;
     },
   },
 
