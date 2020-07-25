@@ -34,6 +34,23 @@
             </h5>
           </div>
         </div>
+        <div :style="alterputsStyle()">
+          <div
+            class="alterput"
+            v-for="alterput in value.alterputs"
+            :key="alterput.name"
+          >
+            <input
+              class="link"
+              type="checkbox"
+              :style="alterputStyle()"
+              @click.prevent="clickPort($event, 'alterput', alterput)"
+            />
+            <h5 :style="styleH5()">
+              {{ alterput.name | upperCase }}
+            </h5>
+          </div>
+        </div>
         <div :style="outputsStyle()">
           <div
             class="output"
@@ -58,7 +75,7 @@
 
 <script>
 export default {
-  name: "TwoWayCard",
+  name: "ThreeWayCard",
   props: ["width", "height", "value", "scale", "origin"],
 
   methods: {
@@ -110,6 +127,13 @@ export default {
       };
     },
 
+    midContentStyle() {
+      return {
+        width: "100%",
+        "background-color": "rgb(46, 146, 68)",
+      };
+    },
+
     cardHeaderStyle() {
       return {
         "background-color": "rgb(255, 255, 255)",
@@ -133,7 +157,7 @@ export default {
       return {
         "padding-left": 10 * this.scale + "px",
         display: "flex",
-        width: "50%",
+        width: "33.33%",
         "flex-direction": "column",
         "justify-content": "space-around",
         "background-color": "rgb(167, 167, 167)",
@@ -143,11 +167,23 @@ export default {
       };
     },
 
+    alterputsStyle() {
+      return {
+        width: "33.33%",
+        "padding-bottom": 10 * this.scale + "px",
+        display: "flex",
+        "flex-direction": "column",
+        "justify-content": "space-around",
+        "background-color": "rgb(253, 255, 130)",
+        "border-bottom": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
+      };
+    },
+
     outputsStyle() {
       return {
         "padding-right": 10 * this.scale + "px",
         display: "flex",
-        width: "50%",
+        width: "33.33%",
         "flex-direction": "column",
         "justify-content": "space-around",
         "background-color": "rgb(125, 190, 243)",
@@ -183,6 +219,13 @@ export default {
         height: 13 * this.scale + "px",
       };
     },
+
+    alterputStyle() {
+      return {
+        width: 13 * this.scale + "px",
+        height: 13 * this.scale + "px",
+      };
+    },
   },
 };
 </script>
@@ -211,6 +254,19 @@ export default {
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
+}
+
+.alterput {
+  float: right;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  transform: rotate(270deg);
+}
+
+.teste {
+  background-color: rgb(255, 255, 255);
 }
 
 h5:hover {

@@ -17,10 +17,11 @@ export default {
       actions: [
         {
           title: "desvia-se-true",
+          type: "two-way",
           name: "If",
           inputs: [
             {
-              name: "list",
+              name: "item",
               value: null,
             },
           ],
@@ -35,10 +36,11 @@ export default {
         },
         {
           title: "Percorre lista",
+          type: "two-way",
           name: "Loop",
           inputs: [
             {
-              name: "list",
+              name: "item",
               value: null,
             },
           ],

@@ -42,11 +42,20 @@ export default {
       let calcY1 =
         this.value.input.action.y + this.value.input.posRel.y + diff - initY;
 
+      let genericOutPort = null;
+      if (this.value.output) {
+        genericOutPort = this.value.output;
+      }
+
+      if (this.value.alterput) {
+        genericOutPort = this.value.alterput;
+      }
+
       let calcX2 =
-        this.value.output.action.x + this.value.output.posRel.x + diff + initX;
+        genericOutPort.action.x + genericOutPort.posRel.x + diff + initX;
 
       let calcY2 =
-        this.value.output.action.y + this.value.output.posRel.y + diff - initY;
+        genericOutPort.action.y + genericOutPort.posRel.y + diff - initY;
 
       calcX1 += this.origin.x;
       calcY1 += this.origin.y;

@@ -3,7 +3,20 @@
     <b-nav class="p-1">
       <b-btn active @click="trasnlateToInit">Inicio</b-btn>
       <b-btn active @click="Clear" class="ml-2">Limpar</b-btn>
-      <b-btn active @click="Add" class="ml-2">Adicionar</b-btn>
+      <b-btn
+        active
+        draggable="true"
+        @dragend="dropNew($event, 'two-way')"
+        class="ml-2"
+        >Two Ways</b-btn
+      >
+      <b-btn
+        active
+        draggable="true"
+        @dragend="dropNew($event, 'three-way')"
+        class="ml-2"
+        >Three Ways</b-btn
+      >
     </b-nav>
     <div class="body-container">
       <svg
@@ -14,19 +27,35 @@
         @mouseup.prevent="unselect"
       >
         <TwoWayCard
-          v-for="action in actions"
+          v-for="action in TwoWayActions()"
           :key="action.name"
           :value="action"
           :scale="1"
           :origin="svg"
-          height="110"
-          width="200"
+          :height="cardHeight"
+          :width="cardWidth"
           @move="move($event)"
           @select="select($event)"
           @unselect="unselect"
           @open="openEdit($event)"
           @click-input="setSelectedPort($event, 'input')"
           @click-output="setSelectedPort($event, 'output')"
+        />
+        <ThreeWayCard
+          v-for="action in ThreeWayActions()"
+          :key="action.name"
+          :value="action"
+          :scale="1"
+          :origin="svg"
+          :height="cardHeight"
+          :width="cardWidth"
+          @move="move($event)"
+          @select="select($event)"
+          @unselect="unselect"
+          @open="openEdit($event)"
+          @click-input="setSelectedPort($event, 'input')"
+          @click-output="setSelectedPort($event, 'output')"
+          @click-alterput="setSelectedPort($event, 'alterput')"
         />
         <LinkLine
           v-for="link in links"
@@ -44,6 +73,7 @@
 
 <script>
 import TwoWayCard from "./TwoWayCard";
+import ThreeWayCard from "./ThreeWayCard";
 import LinkLine from "./LinkLine";
 import LigaturesMap from "./LigaturesMap";
 
@@ -56,6 +86,7 @@ export default {
     TwoWayCard,
     LinkLine,
     LigaturesMap,
+    ThreeWayCard,
   },
 
   mounted() {
@@ -66,6 +97,8 @@ export default {
     return {
       actions: [],
       links: [],
+      cardWidth: 300,
+      cardHeight: 150,
       prevPos: null,
       onMove: null,
       stage: [],
@@ -81,6 +114,14 @@ export default {
   },
 
   methods: {
+    TwoWayActions() {
+      return this.actions.filter((act) => act.type === "two-way");
+    },
+
+    ThreeWayActions() {
+      return this.actions.filter((act) => act.type === "three-way");
+    },
+
     openEdit(action) {
       alert(action.name);
     },
@@ -90,46 +131,90 @@ export default {
       this.links = [];
     },
 
-    Add() {
+    dropNew(event, type) {
+      const midX = this.cardWidth / 2;
+      const midY = this.cardHeight / 2;
+      this.Add(event.x - midX, event.y - midY, type);
+    },
+
+    Add(paramX, paramY, type) {
       const newAct = {
         title: "nova ação",
+        type: type,
         name: this.findAvaliableName(),
         inputs: [
           {
-            name: "list",
+            name: "in1",
             value: null,
           },
         ],
-        outputs: [
-          {
-            name: "list",
-            value: null,
-          },
-        ],
-        x: -this.svg.x + 100,
-        y: -this.svg.y + 100,
+        x: paramX,
+        y: paramY,
       };
+
+      switch (type) {
+        case "three-way":
+          newAct.alterputs = [
+            {
+              name: "alt1",
+              value: null,
+            },
+          ];
+          newAct.outputs = [
+            {
+              name: "out1",
+              value: null,
+            },
+          ];
+          break;
+        case "two-way":
+          newAct.outputs = [
+            {
+              name: "out1",
+              value: null,
+            },
+          ];
+          break;
+      }
 
       this.actions.push(newAct);
     },
 
     setSelectedLine(event) {
       this.selectedLine = event;
-      console.log(event);
     },
 
     dropLink(event) {
       const index = this.links.findIndex((l) => l.id == event);
+      this.removeActionLink(this.links[index]);
       this.links.splice(index, 1);
-      console.log(this.links);
+    },
+
+    removeActionLink(relationship) {
+      if (relationship.input && relationship.output) {
+        relationship.input.action.outputs.filter(
+          (x) => x.name === relationship.output.port.name
+        ).value = null;
+        relationship.output.action.inputs.filter(
+          (x) => x.name === relationship.input.port.name
+        ).value = null;
+      }
+      if (relationship.input && this.links.alterput) {
+        relationship.input.action.alterputs.filter(
+          (x) => x.name === relationship.alterput.port.name
+        ).value = null;
+        relationship.alterput.action.inputs.filter(
+          (x) => x.name === relationship.input.port.name
+        ).value = null;
+      }
     },
 
     findAvaliableName() {
       let exists = 1;
       let count = 0;
       let name = "";
-      while (exists > 0) {
-        name = `new-action-${count}`;
+      while (exists >= 0) {
+        name = "new-action-" + count;
         exists = this.actions.findIndex((act) => act.name === name);
         count++;
       }
@@ -141,6 +226,7 @@ export default {
         return;
       }
       this.onMove = event.action;
+      this.onMove.select = true;
       this.prevPos = {
         x: event.x,
         y: event.y,
@@ -148,6 +234,10 @@ export default {
     },
 
     unselect() {
+      if (this.onMove && this.onMove.select) {
+        this.onMove.select = false;
+      }
+
       this.onMove = null;
       this.onPan = false;
     },
@@ -183,7 +273,12 @@ export default {
     },
 
     checkLink() {
-      if (this.stage && this.stage.input && this.stage.output) {
+      if (
+        this.stage &&
+        ((this.stage.input && this.stage.output) ||
+          (this.stage.input && this.stage.alterput))
+      ) {
+        this.atributeRalationship();
         this.stage.id = this.getLinkId();
         const index = this.links.findIndex((x) => x.id === this.stage.id);
         if (index < 0) {
@@ -193,12 +288,50 @@ export default {
       }
     },
 
+    atributeRalationship() {
+      let inputIndex = this.stage.input.action.inputs.findIndex(
+        (x) => x.name === this.stage.input.port.name
+      );
+      if (this.stage.alterput) {
+        this.stage.input.action.inputs[
+          inputIndex
+        ].value = this.stage.alterput.action.name;
+        let alterputIndex = this.stage.alterput.action.alterputs.findIndex(
+          (x) => x.name === this.stage.alterput.port.name
+        );
+        this.stage.alterput.action.inputs[
+          alterputIndex
+        ].value = this.stage.input.action.name;
+      }
+      if (this.stage.output) {
+        this.stage.input.action.inputs[
+          inputIndex
+        ].value = this.stage.output.action.name;
+        let outputIndex = this.stage.output.action.outputs.findIndex(
+          (x) => x.name === this.stage.output.port.name
+        );
+        this.stage.output.action.inputs[
+          outputIndex
+        ].value = this.stage.input.action.name;
+      }
+    },
+
     getLinkId() {
       let exists = 1;
       let idNameSufix = 0;
       let name = "";
+      let defaultPrefixName = this.getDefaultPrefixName();
       while (exists !== null) {
-        name =
+        name = defaultPrefixName + idNameSufix;
+        exists = document.getElementById(name);
+        idNameSufix++;
+      }
+      return name;
+    },
+
+    getDefaultPrefixName() {
+      if (this.stage && this.stage.output) {
+        return (
           this.stage.input.port.name +
           "_" +
           this.stage.input.action.name +
@@ -206,12 +339,21 @@ export default {
           this.stage.output.port.name +
           "_" +
           this.stage.output.action.name +
-          "_" +
-          idNameSufix;
-        exists = document.getElementById(name);
-        idNameSufix++;
+          "_"
+        );
       }
-      return name;
+      if (this.stage && this.stage.alterput) {
+        return (
+          this.stage.input.port.name +
+          "_" +
+          this.stage.input.action.name +
+          "_" +
+          this.stage.alterput.port.name +
+          "_" +
+          this.stage.alterput.action.name +
+          "_"
+        );
+      }
     },
 
     zoom(event) {

@@ -12,7 +12,10 @@
         @dragend.prevent="checkDrop($event, link.id)"
       >
         <h5>
-          {{ link.output.action.name }} &#8594; {{ link.input.action.name }}
+          {{
+            link.output ? link.output.action.name : link.alterput.action.name
+          }}
+          &#8594; {{ link.input.action.name }}
         </h5>
       </b-list-group-item>
     </b-list-group>
@@ -37,8 +40,15 @@ export default {
     },
 
     getLinkDescription(link) {
+      let defaultPut;
+      if (link.output) {
+        defaultPut = link.output;
+      }
+      if (link.alterput) {
+        defaultPut = link.alterput;
+      }
       return (
-        link.input.action.name + " " + "&#8594;" + " " + link.output.action.name
+        link.input.action.name + " " + "&#8594;" + " " + defaultPut.action.name
       );
     },
 
