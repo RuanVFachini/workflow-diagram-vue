@@ -1,23 +1,37 @@
 <template>
   <g id="div-link">
     <rect
-      :x="getLine().x1 - getLine().diff"
-      :y="getLine().y1 - getLine().diff"
+      :x="getLine().input.x1 - getLine().diff"
+      :y="getLine().input.y1 - getLine().diff"
       :width="getLine().width"
       :height="getLine().height"
       :rx="getLine().rx"
       style="fill:black"
     />
     <line
-      :x1="getLine().x1"
-      :y1="getLine().y1"
-      :x2="getLine().x2"
-      :y2="getLine().y2"
+      :x1="getLine().input.x1"
+      :y1="getLine().input.y1"
+      :x2="getLine().input.x2"
+      :y2="getLine().input.y2"
+      :style="getLine().styleLine"
+    />
+    <line
+      :x1="getLine().ligature.x1"
+      :y1="getLine().ligature.y1"
+      :x2="getLine().ligature.x2"
+      :y2="getLine().ligature.y2"
+      :style="getLine().styleLine"
+    />
+    <line
+      :x1="getLine().output.x1"
+      :y1="getLine().output.y1"
+      :x2="getLine().output.x2"
+      :y2="getLine().output.y2"
       :style="getLine().styleLine"
     />
     <rect
-      :x="getLine().x2 - getLine().diff"
-      :y="getLine().y2 - getLine().diff"
+      :x="getLine().output.x2 - getLine().diff"
+      :y="getLine().output.y2 - getLine().diff"
       :width="getLine().width"
       :height="getLine().height"
       :rx="getLine().rx"
@@ -61,12 +75,61 @@ export default {
       calcY1 += this.origin.y;
       calcX2 += this.origin.x;
       calcY2 += this.origin.y;
+      const midX = (calcX1 - calcX2) / 2;
+      let outputXy = null;
+      let ligatureXy = null;
+      let inputXy = null;
+
+      if (this.value.output) {
+        outputXy = {
+          x1: (calcX2 + midX) * this.scale,
+          y1: calcY2 * this.scale,
+          x2: calcX2 * this.scale,
+          y2: calcY2 * this.scale,
+        };
+
+        ligatureXy = {
+          x1: outputXy.x1 * this.scale,
+          y1: outputXy.y1 * this.scale,
+          x2: (calcX1 - midX) * this.scale,
+          y2: calcY1 * this.scale,
+        };
+
+        inputXy = {
+          x1: calcX1 * this.scale,
+          y1: calcY1 * this.scale,
+          x2: (calcX1 - midX) * this.scale,
+          y2: calcY1 * this.scale,
+        };
+      }
+
+      if (this.value.alterput) {
+        outputXy = {
+          x1: calcX2 * this.scale,
+          y2: calcY2 * this.scale,
+          x2: calcX2 * this.scale,
+          y1: calcY1 * this.scale,
+        };
+
+        ligatureXy = {
+          x1: outputXy.x1 * this.scale,
+          y1: outputXy.y1 * this.scale,
+          x2: outputXy.x1 * this.scale,
+          y2: outputXy.y1 * this.scale,
+        };
+
+        inputXy = {
+          x1: calcX1 * this.scale,
+          y1: calcY1 * this.scale,
+          x2: calcX2 * this.scale,
+          y2: calcY1 * this.scale,
+        };
+      }
 
       return {
-        x1: calcX1 * this.scale,
-        y1: calcY1 * this.scale,
-        x2: calcX2 * this.scale,
-        y2: calcY2 * this.scale,
+        input: inputXy,
+        output: outputXy,
+        ligature: ligatureXy,
         width: 12 * this.scale,
         height: 12 * this.scale,
         rx: 1 * this.scale,

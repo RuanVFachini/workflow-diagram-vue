@@ -17,6 +17,13 @@
         class="ml-2"
         >Three Ways</b-btn
       >
+      <b-btn
+        active
+        draggable="true"
+        @dragend="dropNew($event, 'single-way')"
+        class="ml-2"
+        >Single Way</b-btn
+      >
     </b-nav>
     <div class="body-container">
       <svg
@@ -26,26 +33,11 @@
         @mouseleave.prevent="unselect"
         @mouseup.prevent="unselect"
       >
-        <TwoWayCard
-          v-for="action in TwoWayActions()"
+        <DiagramCard
+          v-for="action in actions"
           :key="action.name"
           :value="action"
-          :scale="1"
-          :origin="svg"
-          :height="cardHeight"
-          :width="cardWidth"
-          @move="move($event)"
-          @select="select($event)"
-          @unselect="unselect"
-          @open="openEdit($event)"
-          @click-input="setSelectedPort($event, 'input')"
-          @click-output="setSelectedPort($event, 'output')"
-        />
-        <ThreeWayCard
-          v-for="action in ThreeWayActions()"
-          :key="action.name"
-          :value="action"
-          :scale="1"
+          :scale="scale"
           :origin="svg"
           :height="cardHeight"
           :width="cardWidth"
@@ -61,7 +53,7 @@
           v-for="link in links"
           :key="link.id"
           :value="link"
-          :scale="1"
+          :scale="scale"
           :origin="svg"
           @select-line="setSelectedLine($event)"
         />
@@ -72,8 +64,7 @@
 </template>
 
 <script>
-import TwoWayCard from "./TwoWayCard";
-import ThreeWayCard from "./ThreeWayCard";
+import DiagramCard from "./DiagramCard";
 import LinkLine from "./LinkLine";
 import LigaturesMap from "./LigaturesMap";
 
@@ -83,10 +74,9 @@ export default {
   props: ["params"],
 
   components: {
-    TwoWayCard,
+    DiagramCard,
     LinkLine,
     LigaturesMap,
-    ThreeWayCard,
   },
 
   mounted() {
@@ -97,8 +87,8 @@ export default {
     return {
       actions: [],
       links: [],
-      cardWidth: 300,
-      cardHeight: 150,
+      cardWidth: 250,
+      cardHeight: 120,
       prevPos: null,
       onMove: null,
       stage: [],
@@ -114,14 +104,6 @@ export default {
   },
 
   methods: {
-    TwoWayActions() {
-      return this.actions.filter((act) => act.type === "two-way");
-    },
-
-    ThreeWayActions() {
-      return this.actions.filter((act) => act.type === "three-way");
-    },
-
     openEdit(action) {
       alert(action.name);
     },
@@ -142,12 +124,6 @@ export default {
         title: "nova ação",
         type: type,
         name: this.findAvaliableName(),
-        inputs: [
-          {
-            name: "in1",
-            value: null,
-          },
-        ],
         x: paramX,
         y: paramY,
       };
@@ -156,13 +132,19 @@ export default {
         case "three-way":
           newAct.alterputs = [
             {
-              name: "alt1",
+              name: "alt-1",
               value: null,
             },
           ];
           newAct.outputs = [
             {
-              name: "out1",
+              name: "out-1",
+              value: null,
+            },
+          ];
+          newAct.inputs = [
+            {
+              name: "in-1",
               value: null,
             },
           ];
@@ -170,7 +152,21 @@ export default {
         case "two-way":
           newAct.outputs = [
             {
-              name: "out1",
+              name: "out-1",
+              value: null,
+            },
+          ];
+          newAct.inputs = [
+            {
+              name: "in-1",
+              value: null,
+            },
+          ];
+          break;
+        case "single-way":
+          newAct.outputs = [
+            {
+              name: "out-1",
               value: null,
             },
           ];
@@ -278,7 +274,7 @@ export default {
         ((this.stage.input && this.stage.output) ||
           (this.stage.input && this.stage.alterput))
       ) {
-        this.atributeRalationship();
+        this.setAtributeRalationship();
         this.stage.id = this.getLinkId();
         const index = this.links.findIndex((x) => x.id === this.stage.id);
         if (index < 0) {
@@ -288,11 +284,13 @@ export default {
       }
     },
 
-    atributeRalationship() {
-      let inputIndex = this.stage.input.action.inputs.findIndex(
-        (x) => x.name === this.stage.input.port.name
-      );
-      if (this.stage.alterput) {
+    setAtributeRalationship() {
+      let inputIndex = this.stage.input.action.inputs.findIndex((x) => {
+        if (this.stage.input) {
+          x.name === this.stage.input.port.name;
+        }
+      });
+      if (this.stage.alterput && this.stage.input.action.inputs[inputIndex]) {
         this.stage.input.action.inputs[
           inputIndex
         ].value = this.stage.alterput.action.name;
@@ -303,7 +301,7 @@ export default {
           alterputIndex
         ].value = this.stage.input.action.name;
       }
-      if (this.stage.output) {
+      if (this.stage.output && this.stage.input.action.inputs[inputIndex]) {
         this.stage.input.action.inputs[
           inputIndex
         ].value = this.stage.output.action.name;

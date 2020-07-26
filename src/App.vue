@@ -14,46 +14,7 @@ export default {
   },
   data() {
     return {
-      actions: [
-        {
-          title: "desvia-se-true",
-          type: "two-way",
-          name: "If",
-          inputs: [
-            {
-              name: "item",
-              value: null,
-            },
-          ],
-          outputs: [
-            {
-              name: "item",
-              value: null,
-            },
-          ],
-          x: 50,
-          y: 50,
-        },
-        {
-          title: "Percorre lista",
-          type: "two-way",
-          name: "Loop",
-          inputs: [
-            {
-              name: "item",
-              value: null,
-            },
-          ],
-          outputs: [
-            {
-              name: "item",
-              value: null,
-            },
-          ],
-          x: 50,
-          y: 50,
-        },
-      ],
+      actions: [],
     };
   },
 };
