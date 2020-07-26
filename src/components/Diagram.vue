@@ -58,7 +58,12 @@
           @select-line="setSelectedLine($event)"
         />
       </svg>
-      <LigaturesMap :values="links" @drop-item="dropLink($event)" />
+      <LigaturesMap
+        :values="links"
+        @drop-item="dropLink($event)"
+        @in-ligature="inLigature($event)"
+        @out-ligature="outLigature($event)"
+      />
     </div>
   </div>
 </template>
@@ -111,6 +116,24 @@ export default {
     Clear() {
       this.actions = [];
       this.links = [];
+    },
+
+    inLigature(event) {
+      this.changeColirLinkLine(event, "black", "red");
+    },
+
+    outLigature(event) {
+      this.changeColirLinkLine(event, "red", "black");
+    },
+
+    changeColirLinkLine(event, oldValue, newValue) {
+      for (let i = 1; i <= 5; i++) {
+        const idElement = event + "-" + i;
+        let element = document.getElementById(idElement);
+        let style = element.getAttribute("style");
+        style = style.replace(oldValue, newValue);
+        element.setAttribute("style", style);
+      }
     },
 
     dropNew(event, type) {

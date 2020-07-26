@@ -10,6 +10,8 @@
         draggable="true"
         @dragstart="setRef($event)"
         @dragend.prevent="checkDrop($event, link.id)"
+        @mouseenter="$emit('in-ligature', link.id)"
+        @mouseleave="$emit('out-ligature', link.id)"
       >
         <h5>
           {{

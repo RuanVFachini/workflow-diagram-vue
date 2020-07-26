@@ -1,6 +1,7 @@
 <template>
-  <g id="div-link">
+  <g :id="value.id">
     <rect
+      :id="value.id + '-1'"
       :x="getLine().input.x1 - getLine().diff"
       :y="getLine().input.y1 - getLine().diff"
       :width="getLine().width"
@@ -9,27 +10,31 @@
       style="fill:black"
     />
     <line
+      :id="value.id + '-2'"
       :x1="getLine().input.x1"
       :y1="getLine().input.y1"
       :x2="getLine().input.x2"
       :y2="getLine().input.y2"
-      :style="getLine().styleLine"
+      :style="getLineStyle"
     />
     <line
+      :id="value.id + '-3'"
       :x1="getLine().ligature.x1"
       :y1="getLine().ligature.y1"
       :x2="getLine().ligature.x2"
       :y2="getLine().ligature.y2"
-      :style="getLine().styleLine"
+      :style="getLineStyle"
     />
     <line
+      :id="value.id + '-4'"
       :x1="getLine().output.x1"
       :y1="getLine().output.y1"
       :x2="getLine().output.x2"
       :y2="getLine().output.y2"
-      :style="getLine().styleLine"
+      :style="getLineStyle"
     />
     <rect
+      :id="value.id + '-5'"
       :x="getLine().output.x2 - getLine().diff"
       :y="getLine().output.y2 - getLine().diff"
       :width="getLine().width"
@@ -44,6 +49,16 @@
 export default {
   name: "LinkLine",
   props: ["value", "scale", "origin"],
+  computed: {
+    getLineStyle() {
+      let styleLine = "black";
+
+      if (this.value.onSelection) {
+        styleLine = "orange";
+      }
+      return "stroke:" + styleLine + ";stroke-width:" + 4 * this.scale;
+    },
+  },
   methods: {
     getLine() {
       const initX = document.getElementById("main-grid").getClientRects()[0].x;
@@ -134,7 +149,6 @@ export default {
         height: 12 * this.scale,
         rx: 1 * this.scale,
         diff: diff,
-        styleLine: "stroke:black;stroke-width:" + 4 * this.scale,
       };
     },
   },
