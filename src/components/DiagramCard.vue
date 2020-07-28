@@ -4,7 +4,6 @@
     :y="cardParams().y"
     :width="cardParams().width"
     :height="cardParams().height"
-    @dblclick="$emit('open', value)"
   >
     <div class="card" draggable="false">
       <div
@@ -86,7 +85,10 @@ export default {
         value = "two";
       }
       if (!this.value.inputs && this.value.outputs && !this.value.alterputs) {
-        value = "one";
+        value = "one-out";
+      }
+      if (this.value.inputs && !this.value.outputs && !this.value.alterputs) {
+        value = "one-in";
       }
       return value;
     },
@@ -99,7 +101,7 @@ export default {
         return {};
       }
 
-      return {
+      let inputsStyle = {
         "padding-left": 10 * this.scale + "px",
         display: "flex",
         width: width + "%",
@@ -110,6 +112,13 @@ export default {
         "border-left": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
         "border-bottom": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
       };
+
+      if (width == 100 && this.value.inputs) {
+        inputsStyle["border-bottom-right-radius"] = 15 * this.scale + "px";
+        inputsStyle["border-right"] =
+          "solid " + 2 * this.scale + "px rgb(46, 43, 43)";
+      }
+      return inputsStyle;
     },
 
     outputsStyle() {
@@ -130,6 +139,8 @@ export default {
         outputStyle["border-bottom-left-radius"] = 15 * this.scale + "px";
         outputStyle["border-left"] =
           "solid " + 2 * this.scale + "px rgb(46, 43, 43)";
+      } else if (width === 100 && this.value.inputs) {
+        return {};
       }
       return outputStyle;
     },
@@ -137,7 +148,7 @@ export default {
     alterputsStyle() {
       let width =
         this.type === "three" ? 33.33 : this.type === "two" ? 50 : 100;
-      if (width == 100 && this.value.outputs) {
+      if (width == 100 && (this.value.outputs || this.value.inputs)) {
         return {};
       }
       if (width == 50 && this.value.outputs) {

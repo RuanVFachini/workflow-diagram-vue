@@ -20,9 +20,16 @@
       <b-btn
         active
         draggable="true"
-        @dragend="dropNew($event, 'single-way')"
+        @dragend="dropNew($event, 'single-way-in')"
         class="ml-2"
-        >Single Way</b-btn
+        >Single Way In</b-btn
+      >
+      <b-btn
+        active
+        draggable="true"
+        @dragend="dropNew($event, 'single-way-out')"
+        class="ml-2"
+        >Single Way Out</b-btn
       >
     </b-nav>
     <div class="body-container">
@@ -44,7 +51,6 @@
           @move="move($event)"
           @select="select($event)"
           @unselect="unselect"
-          @open="openEdit($event)"
           @click-input="setSelectedPort($event, 'input')"
           @click-output="setSelectedPort($event, 'output')"
           @click-alterput="setSelectedPort($event, 'alterput')"
@@ -109,10 +115,6 @@ export default {
   },
 
   methods: {
-    openEdit(action) {
-      alert(action.name);
-    },
-
     Clear() {
       this.actions = [];
       this.links = [];
@@ -186,7 +188,7 @@ export default {
             },
           ];
           break;
-        case "single-way":
+        case "single-way-out":
           newAct.outputs = [
             {
               name: "out-1",
@@ -194,7 +196,18 @@ export default {
             },
           ];
           break;
+        case "single-way-in":
+          newAct.inputs = [
+            {
+              name: "in-1",
+              value: null,
+            },
+          ];
+          break;
       }
+
+      newAct.x = newAct.x > 0 ? newAct.x : 0;
+      newAct.y = newAct.y > 0 ? newAct.y : 0;
 
       this.actions.push(newAct);
     },
@@ -211,12 +224,16 @@ export default {
 
     removeActionLink(relationship) {
       if (relationship.input && relationship.output) {
-        relationship.input.action.outputs.filter(
-          (x) => x.name === relationship.output.port.name
-        ).value = null;
-        relationship.output.action.inputs.filter(
-          (x) => x.name === relationship.input.port.name
-        ).value = null;
+        if (relationship.input.action.outputs) {
+          relationship.input.action.outputs.filter(
+            (x) => x.name === relationship.output.port.name
+          ).value = null;
+        }
+        if (relationship.output.action.inputs) {
+          relationship.output.action.inputs.filter(
+            (x) => x.name === relationship.input.port.name
+          ).value = null;
+        }
       }
       if (relationship.input && this.links.alterput) {
         relationship.input.action.alterputs.filter(

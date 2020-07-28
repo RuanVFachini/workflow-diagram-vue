@@ -1,6 +1,8 @@
 .card {
   float: left;
   background-color: transparent;
+  z-index: 1;
+  position: relative;
   height: 100%;
   width: 100%;
   padding: 0px;
