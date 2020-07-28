@@ -1,84 +1,156 @@
 <template>
+  <g :id="value.id">
+    <rect
+      :id="value.id + '-1'"
+      :x="getLine().input.x1 - getLine().diff"
+      :y="getLine().input.y1 - getLine().diff"
+      :width="getLine().width"
+      :height="getLine().height"
+      :rx="getLine().rx"
+      style="fill:black"
+    />
     <line
-        :x1="getP1Node.x" 
-        :y1="getP1Node.y" 
-        :x2="getP2Node.x" 
-        :y2="getP2Node.y" 
-        :style="lineStyle"/>
+      :id="value.id + '-2'"
+      :x1="getLine().input.x1"
+      :y1="getLine().input.y1"
+      :x2="getLine().input.x2"
+      :y2="getLine().input.y2"
+      :style="getLineStyle"
+    />
+    <line
+      :id="value.id + '-3'"
+      :x1="getLine().ligature.x1"
+      :y1="getLine().ligature.y1"
+      :x2="getLine().ligature.x2"
+      :y2="getLine().ligature.y2"
+      :style="getLineStyle"
+    />
+    <line
+      :id="value.id + '-4'"
+      :x1="getLine().output.x1"
+      :y1="getLine().output.y1"
+      :x2="getLine().output.x2"
+      :y2="getLine().output.y2"
+      :style="getLineStyle"
+    />
+    <rect
+      :id="value.id + '-5'"
+      :x="getLine().output.x2 - getLine().diff"
+      :y="getLine().output.y2 - getLine().diff"
+      :width="getLine().width"
+      :height="getLine().height"
+      :rx="getLine().rx"
+      style="fill:black"
+    />
+  </g>
 </template>
 
 <script>
 export default {
-  name: 'LinkLine',
-  props: ['p1','p2','width','height'],
-
+  name: "LinkLine",
+  props: ["value", "scale", "origin"],
   computed: {
-    getP1Coordenadas() {
+    getLineStyle() {
+      let styleLine = "black";
+
+      if (this.value.onSelection) {
+        styleLine = "orange";
+      }
+      return "stroke:" + styleLine + ";stroke-width:" + 4 * this.scale;
+    },
+  },
+  methods: {
+    getLine() {
+      const initX = document.getElementById("main-grid").getClientRects()[0].x;
+      const initY = document.getElementById("main-grid").getClientRects()[0].y;
+
+      const diff = 6.5 * this.scale;
+
+      let calcX1 =
+        this.value.input.action.x + this.value.input.posRel.x + diff + initX;
+      let calcY1 =
+        this.value.input.action.y + this.value.input.posRel.y + diff - initY;
+
+      let genericOutPort = null;
+      if (this.value.output) {
+        genericOutPort = this.value.output;
+      }
+
+      if (this.value.alterput) {
+        genericOutPort = this.value.alterput;
+      }
+
+      let calcX2 =
+        genericOutPort.action.x + genericOutPort.posRel.x + diff + initX;
+
+      let calcY2 =
+        genericOutPort.action.y + genericOutPort.posRel.y + diff - initY;
+
+      calcX1 += this.origin.x;
+      calcY1 += this.origin.y;
+      calcX2 += this.origin.x;
+      calcY2 += this.origin.y;
+      const midX = (calcX1 - calcX2) / 2;
+      let outputXy = null;
+      let ligatureXy = null;
+      let inputXy = null;
+
+      if (this.value.output) {
+        outputXy = {
+          x1: (calcX2 + midX) * this.scale,
+          y1: calcY2 * this.scale,
+          x2: calcX2 * this.scale,
+          y2: calcY2 * this.scale,
+        };
+
+        ligatureXy = {
+          x1: outputXy.x1 * this.scale,
+          y1: outputXy.y1 * this.scale,
+          x2: (calcX1 - midX) * this.scale,
+          y2: calcY1 * this.scale,
+        };
+
+        inputXy = {
+          x1: calcX1 * this.scale,
+          y1: calcY1 * this.scale,
+          x2: (calcX1 - midX) * this.scale,
+          y2: calcY1 * this.scale,
+        };
+      }
+
+      if (this.value.alterput) {
+        outputXy = {
+          x1: calcX2 * this.scale,
+          y2: calcY2 * this.scale,
+          x2: calcX2 * this.scale,
+          y1: calcY1 * this.scale,
+        };
+
+        ligatureXy = {
+          x1: outputXy.x1 * this.scale,
+          y1: outputXy.y1 * this.scale,
+          x2: outputXy.x1 * this.scale,
+          y2: outputXy.y1 * this.scale,
+        };
+
+        inputXy = {
+          x1: calcX1 * this.scale,
+          y1: calcY1 * this.scale,
+          x2: calcX2 * this.scale,
+          y2: calcY1 * this.scale,
+        };
+      }
 
       return {
-        x: this.p1.x + (this.width/2),
-        y: this.p1.y + (this.height/2)
-      }
+        input: inputXy,
+        output: outputXy,
+        ligature: ligatureXy,
+        width: 12 * this.scale,
+        height: 12 * this.scale,
+        rx: 1 * this.scale,
+        diff: diff,
+      };
     },
-    getP2Coordenadas() {
-      return {
-        x: this.p2.x + (this.width/2),
-        y: this.p2.y + (this.height/2)
-      }
-    },
-
-    getP1Node() {
-      const midwidth = (this.width / 2)
-      // const midheight = (this.height / 2)
-      const p1Coor = this.getP1Coordenadas
-      const p2Coor = this.getP2Coordenadas
-      const node = {}
-      if(p1Coor.x < p2Coor.x) {
-        node.x = p1Coor.x + midwidth
-      } else {
-        node.x = p1Coor.x - midwidth
-      }
-      node.y = p1Coor.y
-      return node
-    },
-
-    getP2Node() {
-      const midwidth = (this.width / 2)
-      // const midheight = (this.height / 2)
-      const p1Coor = this.getP1Coordenadas
-      const p2Coor = this.getP2Coordenadas
-      const node = {}
-      if(p1Coor.x < p2Coor.x) {
-        node.x = p2Coor.x - midwidth
-      } else {
-        node.x = p2Coor.x + midwidth
-      }
-      node.y = p2Coor.y
-      return node
-    },
-
-    getInputArrow() {
-      const p1Coor = this.getP1Node
-      // const p2Coor = this.getP2Node
-      const p1X = p1Coor.x
-      const p1Y = p1Coor.y
-      const p2X = p1Coor.x
-      const p2Y = p1Coor.y
-      const p3X = p1Coor.x
-      const p3Y = p1Coor.y
-      
-      return `${p1X},${p1Y} ${p2X},${p2Y} ${p3X},${p3Y}`
-    },
-
-    lineStyle() {
-      if (this.p2.level == 'principal') {
-        return "stroke:blue;stroke-width:4"
-      } else if (this.p2.level == 'alternativo') {
-        return "stroke:green;stroke-width:4"
-      }
-      return "stroke:yellow;stroke-width:4"
-      
-    }
-  }
-}
+  },
+};
 </script>

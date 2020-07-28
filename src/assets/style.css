@@ -1,0 +1,51 @@
+.card {
+  float: left;
+  background-color: transparent;
+  z-index: 1;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  padding: 0px;
+  border: none;
+}
+
+.input {
+  float: left;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.output {
+  float: right;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.alterput {
+  float: right;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  transform: rotate(270deg);
+}
+
+.teste {
+  background-color: rgb(255, 255, 255);
+}
+
+h5:hover {
+  cursor: default;
+}
+
+input.link:hover {
+  cursor: pointer;
+}
+
+.card-header:hover {
+  cursor: move;
+}
