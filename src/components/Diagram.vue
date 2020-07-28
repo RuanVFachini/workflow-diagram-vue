@@ -1,37 +1,41 @@
 <template>
   <div id="main-container">
-    <b-nav class="p-1">
-      <b-btn active @click="trasnlateToInit">Inicio</b-btn>
-      <b-btn active @click="Clear" class="ml-2">Limpar</b-btn>
-      <b-btn
-        active
-        draggable="true"
-        @dragend="dropNew($event, 'two-way')"
-        class="ml-2"
-        >Two Ways</b-btn
-      >
-      <b-btn
-        active
-        draggable="true"
-        @dragend="dropNew($event, 'three-way')"
-        class="ml-2"
-        >Three Ways</b-btn
-      >
-      <b-btn
-        active
-        draggable="true"
-        @dragend="dropNew($event, 'single-way-in')"
-        class="ml-2"
-        >Single Way In</b-btn
-      >
-      <b-btn
-        active
-        draggable="true"
-        @dragend="dropNew($event, 'single-way-out')"
-        class="ml-2"
-        >Single Way Out</b-btn
-      >
-    </b-nav>
+    <div>
+      <b-nav class="p-1">
+        <b-list-group>
+          <b-list-group-item @click="trasnlateToInit">
+            Inicio
+          </b-list-group-item>
+          <b-list-group-item @click="Clear">
+            Limpar
+          </b-list-group-item>
+          <b-list-group-item
+            draggable="true"
+            @dragend="dropNew($event, 'two-way')"
+          >
+            Two Ways
+          </b-list-group-item>
+          <b-list-group-item
+            draggable="true"
+            @dragend="dropNew($event, 'three-way')"
+          >
+            Three Ways
+          </b-list-group-item>
+          <b-list-group-item
+            draggable="true"
+            @dragend="dropNew($event, 'single-way-in')"
+          >
+            Single Way In
+          </b-list-group-item>
+          <b-list-group-item
+            draggable="true"
+            @dragend="dropNew($event, 'single-way-out')"
+          >
+            Single Way Out
+          </b-list-group-item>
+        </b-list-group>
+      </b-nav>
+    </div>
     <div class="body-container">
       <svg
         id="main-grid"
@@ -82,7 +86,7 @@ import LigaturesMap from "./LigaturesMap";
 export default {
   name: "Diagram",
 
-  props: ["params"],
+  props: ["paramActs"],
 
   components: {
     DiagramCard,
@@ -91,7 +95,7 @@ export default {
   },
 
   mounted() {
-    this.actions = this.params;
+    this.actions = this.paramActs;
   },
 
   data() {
@@ -475,7 +479,7 @@ export default {
 #main-container {
   height: 100vh;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: stretch;
 }
 

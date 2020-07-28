@@ -61,7 +61,8 @@ export default {
   },
   methods: {
     getLine() {
-      const initX = document.getElementById("main-grid").getClientRects()[0].x;
+      const initX =
+        0 - document.getElementById("main-grid").getClientRects()[0].x;
       const initY = document.getElementById("main-grid").getClientRects()[0].y;
 
       const diff = 6.5 * this.scale;
