@@ -20,50 +20,42 @@
         </p>
       </div>
       <div :style="cardBodyStyle()" draggable="false">
-        <div :v-if="value.inputs" :style="inputsStyle()">
-          <div class="input" v-for="input in value.inputs" :key="input.name">
+        <div v-if="value.input" :style="inputsStyle()">
+          <div class="input">
             <input
               class="link"
               type="checkbox"
               :style="inputStyle()"
-              @click.prevent="clickPort($event, 'input', input)"
+              @click.prevent="$emit('click-port', cardParams(), 'input')"
             />
             <h5 :style="styleH5()">
-              {{ input.name | upperCase }}
+              {{ "I" | upperCase }}
             </h5>
           </div>
         </div>
-        <div :v-if="value.alterputs" :style="alterputsStyle()">
-          <div
-            class="alterput"
-            v-for="alterput in value.alterputs"
-            :key="alterput.name"
-          >
+        <div v-if="value.alterput" :style="alterputsStyle()">
+          <div class="alterput">
             <input
               class="link"
               type="checkbox"
               :style="alterputStyle()"
-              @click.prevent="clickPort($event, 'alterput', alterput)"
+              @click.prevent="$emit('click-port', cardParams(), 'alterput')"
             />
             <h5 :style="styleH5()">
-              {{ alterput.name | upperCase }}
+              {{ "A" | upperCase }}
             </h5>
           </div>
         </div>
-        <div :v-if="value.outputs" :style="outputsStyle()">
-          <div
-            class="output"
-            v-for="output in value.outputs"
-            :key="output.name"
-          >
+        <div v-if="value.output" :style="outputsStyle()">
+          <div class="output">
             <h5 :style="styleH5()">
-              {{ output.name | upperCase }}
+              {{ "O" | upperCase }}
             </h5>
             <input
               class="link"
               type="checkbox"
               :style="inputStyle()"
-              @click.prevent="clickPort($event, 'output', output)"
+              @click.prevent="$emit('click-port', cardParams(), 'output')"
             />
           </div>
         </div>
@@ -77,17 +69,17 @@ import BasicCard from "./BasicCard";
 
 export default {
   extends: BasicCard,
-  name: "TwoWayCard",
+  name: "DiagramCard",
   computed: {
     type: function() {
       let value = "three";
-      if (this.value.inputs && this.value.outputs && !this.value.alterputs) {
+      if (this.value.input && this.value.output && !this.value.alterput) {
         value = "two";
       }
-      if (!this.value.inputs && this.value.outputs && !this.value.alterputs) {
+      if (!this.value.input && this.value.output && !this.value.alterput) {
         value = "one-out";
       }
-      if (this.value.inputs && !this.value.outputs && !this.value.alterputs) {
+      if (this.value.input && !this.value.output && !this.value.alterput) {
         value = "one-in";
       }
       return value;
@@ -97,7 +89,7 @@ export default {
     inputsStyle() {
       let width =
         this.type === "three" ? 33.33 : this.type === "two" ? 50 : 100;
-      if (width == 100 && this.value.outputs) {
+      if (width == 100 && this.value.output) {
         return {};
       }
 
@@ -107,14 +99,13 @@ export default {
         width: width + "%",
         "flex-direction": "column",
         "justify-content": "space-around",
-        "background-color": "rgb(167, 167, 167)",
-        "border-bottom-left-radius": 15 * this.scale + "px",
+        "border-bottom-left-radius": 5 * this.scale + "px",
         "border-left": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
         "border-bottom": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
       };
 
-      if (width == 100 && this.value.inputs) {
-        inputsStyle["border-bottom-right-radius"] = 15 * this.scale + "px";
+      if (width == 100 && this.value.input) {
+        inputsStyle["border-bottom-right-radius"] = 5 * this.scale + "px";
         inputsStyle["border-right"] =
           "solid " + 2 * this.scale + "px rgb(46, 43, 43)";
       }
@@ -130,16 +121,15 @@ export default {
         width: width + "%",
         "flex-direction": "column",
         "justify-content": "space-around",
-        "background-color": "rgb(125, 190, 243)",
-        "border-bottom-right-radius": 15 * this.scale + "px",
+        "border-bottom-right-radius": 5 * this.scale + "px",
         "border-right": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
         "border-bottom": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
       };
-      if (width === 100 && this.value.outputs) {
-        outputStyle["border-bottom-left-radius"] = 15 * this.scale + "px";
+      if (width === 100 && this.value.output) {
+        outputStyle["border-bottom-left-radius"] = 5 * this.scale + "px";
         outputStyle["border-left"] =
           "solid " + 2 * this.scale + "px rgb(46, 43, 43)";
-      } else if (width === 100 && this.value.inputs) {
+      } else if (width === 100 && this.value.input) {
         return {};
       }
       return outputStyle;
@@ -148,10 +138,10 @@ export default {
     alterputsStyle() {
       let width =
         this.type === "three" ? 33.33 : this.type === "two" ? 50 : 100;
-      if (width == 100 && (this.value.outputs || this.value.inputs)) {
+      if (width == 100 && (this.value.output || this.value.inputs)) {
         return {};
       }
-      if (width == 50 && this.value.outputs) {
+      if (width == 50 && this.value.output) {
         return {};
       }
       return {
@@ -160,7 +150,6 @@ export default {
         display: "flex",
         "flex-direction": "column",
         "justify-content": "space-around",
-        "background-color": "rgb(253, 255, 130)",
         "border-bottom": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
       };
     },

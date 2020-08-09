@@ -2,8 +2,8 @@
   <g :id="value.id">
     <rect
       :id="value.id + '-1'"
-      :x="getLine().input.x1 - getLine().diff"
-      :y="getLine().input.y1 - getLine().diff"
+      :x="getLine().input.x1 - 6"
+      :y="getLine().input.y1 - 6"
       :width="getLine().width"
       :height="getLine().height"
       :rx="getLine().rx"
@@ -35,8 +35,8 @@
     />
     <rect
       :id="value.id + '-5'"
-      :x="getLine().output.x2 - getLine().diff"
-      :y="getLine().output.y2 - getLine().diff"
+      :x="getLine().output.x2 - 6"
+      :y="getLine().output.y2 - 6"
       :width="getLine().width"
       :height="getLine().height"
       :rx="getLine().rx"
@@ -61,86 +61,97 @@ export default {
   },
   methods: {
     getLine() {
-      const initX =
-        0 - document.getElementById("main-grid").getClientRects()[0].x;
-      const initY = document.getElementById("main-grid").getClientRects()[0].y;
+      let outputXy, ligatureXy, inputXy;
 
-      const diff = 6.5 * this.scale;
+      let port1 = this.value.input.ref;
+      let port2 = this.value.output
+        ? this.value.output.ref
+        : this.value.alterput.ref;
 
-      let calcX1 =
-        this.value.input.action.x + this.value.input.posRel.x + diff + initX;
-      let calcY1 =
-        this.value.input.action.y + this.value.input.posRel.y + diff - initY;
+      let portInX = 20;
+      let portInY = 75;
 
-      let genericOutPort = null;
-      if (this.value.output) {
-        genericOutPort = this.value.output;
-      }
-
-      if (this.value.alterput) {
-        genericOutPort = this.value.alterput;
-      }
-
-      let calcX2 =
-        genericOutPort.action.x + genericOutPort.posRel.x + diff + initX;
-
-      let calcY2 =
-        genericOutPort.action.y + genericOutPort.posRel.y + diff - initY;
-
-      calcX1 += this.origin.x;
-      calcY1 += this.origin.y;
-      calcX2 += this.origin.x;
-      calcY2 += this.origin.y;
-      const midX = (calcX1 - calcX2) / 2;
-      let outputXy = null;
-      let ligatureXy = null;
-      let inputXy = null;
+      let portOutX = 0;
+      let portOutY = 0;
 
       if (this.value.output) {
-        outputXy = {
-          x1: (calcX2 + midX) * this.scale,
-          y1: calcY2 * this.scale,
-          x2: calcX2 * this.scale,
-          y2: calcY2 * this.scale,
-        };
+        portOutX = 230;
+        portOutY = 75;
 
-        ligatureXy = {
-          x1: outputXy.x1 * this.scale,
-          y1: outputXy.y1 * this.scale,
-          x2: (calcX1 - midX) * this.scale,
-          y2: calcY1 * this.scale,
-        };
+        let midX = 0;
 
         inputXy = {
-          x1: calcX1 * this.scale,
-          y1: calcY1 * this.scale,
-          x2: (calcX1 - midX) * this.scale,
-          y2: calcY1 * this.scale,
+          x1: port1.x + portInX,
+          y1: port1.y + portInY,
+          x2: 0,
+          y2: port1.y + portInY,
+        };
+
+        outputXy = {
+          x1: 0,
+          y1: port2.y + portOutY,
+          x2: port2.x + portOutX,
+          y2: port2.y + portOutY,
+        };
+
+        midX = (inputXy.x1 - outputXy.x2) / 2;
+
+        inputXy.x2 = inputXy.x1 - midX;
+        outputXy.x1 = outputXy.x2 + midX;
+
+        ligatureXy = {
+          x1: inputXy.x2,
+          y1: inputXy.y2,
+          x2: outputXy.x1,
+          y2: outputXy.y1,
+        };
+      } else {
+        portOutX = 125;
+        portOutY = 105;
+
+        let midX = 0;
+
+        inputXy = {
+          x1: port1.x + portInX,
+          y1: port1.y + portInY,
+          x2: 0,
+          y2: port1.y + portInY,
+        };
+
+        outputXy = {
+          x1: port2.x + portOutX,
+          y1: 0,
+          x2: port2.x + portOutX,
+          y2: port2.y + portOutY,
+        };
+
+        midX = inputXy.x1 - outputXy.x2;
+        inputXy.x2 = inputXy.x1 - midX;
+
+        outputXy.y1 = inputXy.y1;
+
+        ligatureXy = {
+          x1: inputXy.x2,
+          y1: inputXy.y2,
+          x2: inputXy.x2,
+          y2: inputXy.y2,
         };
       }
 
-      if (this.value.alterput) {
-        outputXy = {
-          x1: calcX2 * this.scale,
-          y2: calcY2 * this.scale,
-          x2: calcX2 * this.scale,
-          y1: calcY1 * this.scale,
-        };
+      inputXy.x1 = (inputXy.x1 + this.origin.x) * this.scale;
+      inputXy.x2 = (inputXy.x2 + this.origin.x) * this.scale;
+      inputXy.y1 = (inputXy.y1 + this.origin.y) * this.scale;
+      inputXy.y2 = (inputXy.y2 + this.origin.y) * this.scale;
 
-        ligatureXy = {
-          x1: outputXy.x1 * this.scale,
-          y1: outputXy.y1 * this.scale,
-          x2: outputXy.x1 * this.scale,
-          y2: outputXy.y1 * this.scale,
-        };
+      outputXy.x1 = (outputXy.x1 + this.origin.x) * this.scale;
+      outputXy.x2 = (outputXy.x2 + this.origin.x) * this.scale;
+      outputXy.y1 = (outputXy.y1 + this.origin.y) * this.scale;
+      outputXy.y2 = (outputXy.y2 + this.origin.y) * this.scale;
 
-        inputXy = {
-          x1: calcX1 * this.scale,
-          y1: calcY1 * this.scale,
-          x2: calcX2 * this.scale,
-          y2: calcY1 * this.scale,
-        };
-      }
+      ligatureXy.x1 = (ligatureXy.x1 + this.origin.x) * this.scale;
+      ligatureXy.x2 = (ligatureXy.x2 + this.origin.x) * this.scale;
+      ligatureXy.y1 = (ligatureXy.y1 + this.origin.y) * this.scale;
+      ligatureXy.y2 = (ligatureXy.y2 + this.origin.y) * this.scale;
 
       return {
         input: inputXy,
@@ -149,7 +160,6 @@ export default {
         width: 12 * this.scale,
         height: 12 * this.scale,
         rx: 1 * this.scale,
-        diff: diff,
       };
     },
   },

@@ -1,5 +1,7 @@
 <template>
-  <Diagram :paramActs="actions" />
+  <div class="home">
+    <Diagram :paramActs="actions"><b-button>teste</b-button></Diagram>
+  </div>
 </template>
 
 <script>
@@ -17,3 +19,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.home {
+  height: 100%;
+}
+</style>

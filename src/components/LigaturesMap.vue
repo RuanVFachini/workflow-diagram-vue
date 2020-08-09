@@ -12,13 +12,9 @@
         @dragend.prevent="checkDrop($event, link.id)"
         @mouseenter="$emit('in-ligature', link.id)"
         @mouseleave="$emit('out-ligature', link.id)"
+        @click="click"
       >
-        <h5>
-          {{
-            link.output ? link.output.action.name : link.alterput.action.name
-          }}
-          &#8594; {{ link.input.action.name }}
-        </h5>
+        <h5>{{ link.output.ref.name }} | {{ link.input.ref.name }}</h5>
       </b-list-group-item>
     </b-list-group>
   </div>
@@ -39,6 +35,10 @@ export default {
   methods: {
     setRef(event) {
       this.refToDropItem = event.x;
+    },
+
+    click() {
+      console.log(this.values);
     },
 
     getLinkDescription(link) {
@@ -65,7 +65,7 @@ export default {
 
 <style scoped>
 div.list-ligatures {
-  width: 250px;
+  width: 400px;
 }
 .list-item-custom {
   height: 30px;

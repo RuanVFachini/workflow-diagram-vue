@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <Navbar />
-    <router-view />
+    <div class="content-div">
+      <router-view />
+    </div>
   </div>
 </template>
 
@@ -22,5 +24,12 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.content-div {
+  height: fit-content;
 }
 </style>

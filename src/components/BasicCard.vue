@@ -50,8 +50,8 @@ export default {
         "align-content": "center",
         "border-bottom": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
         "border-top": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
-        "border-top-left-radius": 15 * this.scale + "px",
-        "border-top-right-radius": 15 * this.scale + "px",
+        "border-top-left-radius": 5 * this.scale + "px",
+        "border-top-right-radius": 5 * this.scale + "px",
         "border-left": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
         "border-right": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
       };
@@ -59,7 +59,7 @@ export default {
 
     cardBodyStyle() {
       return {
-        backgroundColor: "none",
+        backgroundColor: "gray",
         width: "100%",
         height: "100%",
         padding: "0px",
@@ -74,6 +74,7 @@ export default {
       let posX = this.value.x + this.origin.x;
       let posY = this.value.y + this.origin.y;
       return {
+        ref: this.value,
         x: posX * this.scale,
         y: posY * this.scale,
         width: this.width * this.scale,
