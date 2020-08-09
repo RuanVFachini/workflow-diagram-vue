@@ -14,7 +14,18 @@
         @mouseleave="$emit('out-ligature', link.id)"
         @click="click"
       >
-        <h5>{{ link.output.ref.name }} | {{ link.input.ref.name }}</h5>
+        <div class="group-list-link">
+          <p class="item-list-link">
+            {{ getOutputDescription(link) | limitSize }}
+          </p>
+          <p class="arrow-icon-list">
+            <b-icon-arrow-right-square-fill
+              scale="1.5"
+              variant="info"
+            ></b-icon-arrow-right-square-fill>
+          </p>
+          <p class="item-list-link">{{ link.input.ref.name | limitSize }}</p>
+        </div>
       </b-list-group-item>
     </b-list-group>
   </div>
@@ -41,23 +52,17 @@ export default {
       console.log(this.values);
     },
 
-    getLinkDescription(link) {
-      let defaultPut;
-      if (link.output) {
-        defaultPut = link.output;
-      }
-      if (link.alterput) {
-        defaultPut = link.alterput;
-      }
-      return (
-        link.input.action.name + " " + "&#8594;" + " " + defaultPut.action.name
-      );
-    },
-
     checkDrop(event, id) {
       if (event.x < this.refToDropItem - 200) {
         this.$emit("drop-item", id);
       }
+    },
+
+    getOutputDescription(link) {
+      if (link.output) {
+        return link.output.ref.name;
+      }
+      return link.alterput.ref.name;
     },
   },
 };
@@ -68,7 +73,7 @@ div.list-ligatures {
   width: 400px;
 }
 .list-item-custom {
-  height: 30px;
+  height: 40px;
   padding: 0;
   margin-top: 2px;
   display: flex;
@@ -76,9 +81,26 @@ div.list-ligatures {
   justify-content: space-around;
   align-content: center;
 }
-h5 {
-  font-size: 10pt;
+.group-list-link {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-content: center;
+}
+
+.item-list-link {
+  font-size: 20px;
   margin: 0px;
+}
+
+.arrow-icon-list {
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
 }
 
 h2 {
