@@ -44,6 +44,7 @@
             :width="cardWidth"
             @move="move($event)"
             @select="select($event)"
+            @remove="removeAction"
             @unselect="unselect"
             @click-port="setSelectedPort"
           />
@@ -92,7 +93,7 @@ export default {
       actions: [],
       links: [],
       cardWidth: 250,
-      cardHeight: 120,
+      cardHeight: 150,
       prevPos: null,
       onMove: null,
       stage: [],
@@ -111,6 +112,15 @@ export default {
     Clear() {
       this.actions = [];
       this.links = [];
+    },
+
+    removeAction(action) {
+      let index = this.getActionIdByName(action.name);
+      this.actions.splice(index, 1);
+    },
+
+    getActionIdByName(name) {
+      return this.actions.findIndex((act) => act.name == name);
     },
 
     inLigature(event) {
@@ -140,6 +150,7 @@ export default {
     Add(paramX, paramY, type) {
       const newAct = {
         title: "nova ação",
+        description: "Nova ação criada",
         type: type,
         name: this.findAvaliableName(),
         x: paramX,

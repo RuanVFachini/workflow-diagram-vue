@@ -68,15 +68,15 @@ export default {
         ? this.value.output.ref
         : this.value.alterput.ref;
 
-      let portInX = 20;
-      let portInY = 75;
+      let portInX = 19;
+      let portInY = 105;
 
       let portOutX = 0;
       let portOutY = 0;
 
       if (this.value.output) {
-        portOutX = 230;
-        portOutY = 75;
+        portOutX = 232;
+        portOutY = portInY;
 
         let midX = 0;
 
@@ -107,7 +107,7 @@ export default {
         };
       } else {
         portOutX = 125;
-        portOutY = 105;
+        portOutY = 133;
 
         let midX = 0;
 

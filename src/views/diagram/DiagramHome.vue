@@ -1,13 +1,16 @@
 <template>
   <div class="home">
-    <h1>Home</h1>
+    <Diagram :paramActs="actions"><b-button>teste</b-button></Diagram>
   </div>
 </template>
 
 <script>
+import Diagram from "../../components/Diagram";
 export default {
-  name: "Home",
-  components: {},
+  name: "DiagramHome",
+  components: {
+    Diagram,
+  },
 
   data() {
     return {

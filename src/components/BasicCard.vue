@@ -42,7 +42,7 @@ export default {
       return {
         "background-color": "rgb(255, 255, 255)",
         width: "100%",
-        height: 40 * this.scale + "px",
+        height: 50 * this.scale + "px",
         padding: "0px",
         display: "flex",
         "flex-direction": "column",
@@ -59,7 +59,7 @@ export default {
 
     cardBodyStyle() {
       return {
-        backgroundColor: "gray",
+        backgroundColor: "#ffcc66",
         width: "100%",
         height: "100%",
         padding: "0px",
@@ -67,6 +67,9 @@ export default {
         "flex-direction": "row",
         "justify-content": "space-between",
         "align-content": "center",
+        "border-bottom": "2px solid black",
+        "border-left": "2px solid black",
+        "border-right": "2px solid black",
       };
     },
 

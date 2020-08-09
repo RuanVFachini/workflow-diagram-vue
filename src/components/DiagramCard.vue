@@ -19,6 +19,25 @@
           {{ value.title | upperCase }}
         </p>
       </div>
+      <ul class="act-menu">
+        <li>
+          <b-icon
+            class="card-action"
+            icon="pencil"
+            variant="primary"
+            scale="1.5"
+          ></b-icon>
+        </li>
+        <li>
+          <b-icon
+            @click="$emit('remove', value)"
+            class="card-action"
+            icon="trash"
+            variant="danger"
+            scale="1.5"
+          ></b-icon>
+        </li>
+      </ul>
       <div :style="cardBodyStyle()" draggable="false">
         <div v-if="value.input" :style="inputsStyle()">
           <div class="input">
@@ -97,18 +116,11 @@ export default {
         "padding-left": 10 * this.scale + "px",
         display: "flex",
         width: width + "%",
+        "background-color": "transparent",
         "flex-direction": "column",
         "justify-content": "space-around",
-        "border-bottom-left-radius": 5 * this.scale + "px",
-        "border-left": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
-        "border-bottom": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
       };
 
-      if (width == 100 && this.value.input) {
-        inputsStyle["border-bottom-right-radius"] = 5 * this.scale + "px";
-        inputsStyle["border-right"] =
-          "solid " + 2 * this.scale + "px rgb(46, 43, 43)";
-      }
       return inputsStyle;
     },
 
@@ -121,38 +133,51 @@ export default {
         width: width + "%",
         "flex-direction": "column",
         "justify-content": "space-around",
-        "border-bottom-right-radius": 5 * this.scale + "px",
-        "border-right": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
-        "border-bottom": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
+        "background-color": "transparent",
       };
-      if (width === 100 && this.value.output) {
-        outputStyle["border-bottom-left-radius"] = 5 * this.scale + "px";
-        outputStyle["border-left"] =
-          "solid " + 2 * this.scale + "px rgb(46, 43, 43)";
-      } else if (width === 100 && this.value.input) {
-        return {};
-      }
       return outputStyle;
     },
 
     alterputsStyle() {
       let width =
         this.type === "three" ? 33.33 : this.type === "two" ? 50 : 100;
-      if (width == 100 && (this.value.output || this.value.inputs)) {
-        return {};
-      }
-      if (width == 50 && this.value.output) {
-        return {};
-      }
       return {
         width: width + "%",
         "padding-bottom": 10 * this.scale + "px",
         display: "flex",
         "flex-direction": "column",
         "justify-content": "space-around",
-        "border-bottom": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
+        "background-color": "transparent",
       };
     },
   },
 };
 </script>
+
+<style scoped>
+ul {
+  margin: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  background-color: white;
+  border-left: 2px solid black;
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
+}
+
+ul li {
+  margin-left: 15px;
+  margin-right: 15px;
+}
+.act-menu {
+  list-style: none;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.card-action:hover {
+  cursor: pointer;
+}
+</style>
