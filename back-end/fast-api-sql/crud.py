@@ -39,3 +39,26 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+
+def delete_workflow(db: Session, workflow_id: int):
+    workflow = db.query(models.WorkFlow).filter(models.WorkFlow.id == workflow_id).first()
+    if workflow is not None:
+        db.delete(workflow)
+    return workflow == db.deleted
+
+
+def get_workflow(db: Session, workflow_id: int):
+    return db.query(models.WorkFlow).filter(models.WorkFlow.id == workflow_id).first()
+
+
+def get_workflows(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.WorkFlow).offset(skip).limit(limit).all()
+
+
+def create_workflow(db: Session, workflow: schemas.WorkflowDto):
+    model = schemas.schema_to_model(workflow)
+    db.add(model)
+    db.commit()
+    db.refresh(model)
+    return model

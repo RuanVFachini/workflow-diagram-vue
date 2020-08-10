@@ -64,3 +64,22 @@ def login(user: schemas.Login, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="credentials not found")
 
     return token
+
+
+@app.get("/workflows/", response_model=List[schemas.WorkflowDto], status_code=status.HTTP_200_OK)
+def read_workflows(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    workflows = crud.get_workflows(db, skip=skip, limit=limit)
+    return workflows
+
+
+@app.get("/workflows/{workflow_id}", response_model=schemas.WorkflowDto, status_code=status.HTTP_200_OK)
+def read_user(workflow_id: int, db: Session = Depends(get_db)):
+    model = crud.get_workflow(db, workflow_id=workflow_id)
+    if model is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workflow not found")
+    return model
+
+
+@app.post("/workflows/", response_model=schemas.WorkflowDto, status_code=status.HTTP_201_CREATED)
+def create_user(workflow: schemas.WorkflowDto, db: Session = Depends(get_db)):
+    return crud.create_workflow(db=db, workflow=workflow)

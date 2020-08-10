@@ -153,7 +153,6 @@ export default {
       const newAct = {
         title: "nova ação",
         description: "Nova ação criada",
-        type: type,
         name: this.findAvaliableName(),
         x: paramX,
         y: paramY,
