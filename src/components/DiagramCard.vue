@@ -19,22 +19,23 @@
           {{ value.title | upperCase }}
         </p>
       </div>
-      <ul class="act-menu">
-        <li>
+      <ul class="act-menu" :style="listStyle()">
+        <li class="list-item" :style="listItemStyle()">
           <b-icon
+            @click="$emit('edit', value)"
             class="card-action"
             icon="pencil"
             variant="primary"
-            scale="1.5"
+            :scale="iconScale"
           ></b-icon>
         </li>
-        <li>
+        <li class="list-item" :style="listItemStyle()">
           <b-icon
             @click="$emit('remove', value)"
             class="card-action"
             icon="trash"
             variant="danger"
-            scale="1.5"
+            :scale="iconScale"
           ></b-icon>
         </li>
       </ul>
@@ -103,6 +104,10 @@ export default {
       }
       return value;
     },
+
+    iconScale: function() {
+      return 1.5 * this.scale;
+    },
   },
   methods: {
     inputsStyle() {
@@ -150,31 +155,47 @@ export default {
         "background-color": "transparent",
       };
     },
+
+    listItemStyle() {
+      let margin = 15 * this.scale;
+      return {
+        "margin-left": margin + "px",
+        "margin-right": margin + "px",
+      };
+    },
+
+    listStyle() {
+      let twoPixels = 2 * this.scale;
+      let height = 45 * this.scale;
+      return {
+        margin: 0 + "px",
+        height: height + "px",
+        "padding-left": 0 + "px",
+        "padding-right": 0 + "px",
+        "padding-top": twoPixels + "px",
+        "padding-bottom": twoPixels + "px",
+        "background-color": "white",
+        "border-left": twoPixels + "px solid black",
+        "border-right": twoPixels + "px solid black",
+        "border-bottom": twoPixels + "px solid black",
+      };
+    },
   },
 };
 </script>
 
 <style scoped>
-ul {
-  margin: 0px;
-  padding-left: 0px;
-  padding-right: 0px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-  background-color: white;
-  border-left: 2px solid black;
-  border-right: 2px solid black;
-  border-bottom: 2px solid black;
-}
-
-ul li {
-  margin-left: 15px;
-  margin-right: 15px;
-}
 .act-menu {
   list-style: none;
   display: flex;
   justify-content: flex-end;
+}
+
+.list-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-action:hover {

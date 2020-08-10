@@ -67,9 +67,9 @@ export default {
         "flex-direction": "row",
         "justify-content": "space-between",
         "align-content": "center",
-        "border-bottom": "2px solid black",
-        "border-left": "2px solid black",
-        "border-right": "2px solid black",
+        "border-bottom": 2 * this.scale + "px solid black",
+        "border-left": 2 * this.scale + "px solid black",
+        "border-right": 2 * this.scale + "px solid black",
       };
     },
 

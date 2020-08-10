@@ -2,8 +2,8 @@
   <g :id="value.id">
     <rect
       :id="value.id + '-1'"
-      :x="getLine().input.x1 - 6"
-      :y="getLine().input.y1 - 6"
+      :x="getLine().input.x1 - getLine().diff"
+      :y="getLine().input.y1 - getLine().diff"
       :width="getLine().width"
       :height="getLine().height"
       :rx="getLine().rx"
@@ -35,8 +35,8 @@
     />
     <rect
       :id="value.id + '-5'"
-      :x="getLine().output.x2 - 6"
-      :y="getLine().output.y2 - 6"
+      :x="getLine().output.x2 - getLine().diff"
+      :y="getLine().output.y2 - getLine().diff"
       :width="getLine().width"
       :height="getLine().height"
       :rx="getLine().rx"
@@ -138,6 +138,8 @@ export default {
         };
       }
 
+      let diffPoint = 6 * this.scale;
+
       inputXy.x1 = (inputXy.x1 + this.origin.x) * this.scale;
       inputXy.x2 = (inputXy.x2 + this.origin.x) * this.scale;
       inputXy.y1 = (inputXy.y1 + this.origin.y) * this.scale;
@@ -160,6 +162,7 @@ export default {
         width: 12 * this.scale,
         height: 12 * this.scale,
         rx: 1 * this.scale,
+        diff: diffPoint,
       };
     },
   },

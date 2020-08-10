@@ -33,6 +33,7 @@
           @mousemove.prevent="mouseMove($event)"
           @mouseleave.prevent="unselect"
           @mouseup.prevent="unselect"
+          @mousewheel="zoom"
         >
           <DiagramCard
             v-for="action in actions"
@@ -45,6 +46,7 @@
             @move="move($event)"
             @select="select($event)"
             @remove="removeAction"
+            @edit="$emit('edit-item', $event)"
             @unselect="unselect"
             @click-port="setSelectedPort"
           />
@@ -76,7 +78,7 @@ import LigaturesMap from "./LigaturesMap";
 export default {
   name: "Diagram",
 
-  props: ["paramActs"],
+  props: ["actions"],
 
   components: {
     DiagramCard,
@@ -84,13 +86,13 @@ export default {
     LigaturesMap,
   },
 
-  mounted() {
-    this.actions = this.paramActs;
+  model: {
+    prop: "actions",
+    event: "change",
   },
 
   data() {
     return {
-      actions: [],
       links: [],
       cardWidth: 250,
       cardHeight: 150,
@@ -271,9 +273,6 @@ export default {
           this.stage.output &&
           !this.findLink(this.stage, "O")
         ) {
-          this.stage.output.ref.output = this.stage.input;
-          this.stage.input.ref.intput = this.stage.output;
-
           const link = {
             id: this.getLinkId(),
             input: this.stage.input,
@@ -287,9 +286,6 @@ export default {
           this.stage.alterput &&
           !this.findLink(this.stage, "A")
         ) {
-          this.stage.alterput.ref.alterput = this.stage.input;
-          this.stage.input.ref.input = this.stage.alterput;
-
           const link = {
             id: this.getLinkId(),
             input: this.stage.input,
