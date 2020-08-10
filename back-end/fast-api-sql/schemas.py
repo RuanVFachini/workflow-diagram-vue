@@ -1,0 +1,33 @@
+from typing import List, Optional
+from pydantic import BaseModel
+
+from . import models
+
+
+class UserBase(BaseModel):
+    name: str
+    email: str
+
+
+class UserCreate(UserBase):
+    password: str
+
+
+class User(UserBase):
+    id: int
+    is_active: bool
+
+    class Config:
+        orm_mode = True
+
+
+class Login(BaseModel):
+    username: str
+    password: str
+
+
+class SessionToken(BaseModel):
+    id: int
+    username: str
+    grant_type: str
+    token: str
