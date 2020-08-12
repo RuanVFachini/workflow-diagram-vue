@@ -1,4 +1,6 @@
 from pydantic import BaseModel
+from typing import Optional, List
+from fastapi.encoders import jsonable_encoder
 
 from . import models
 
@@ -9,11 +11,11 @@ class UserBase(BaseModel):
 
 
 class WorkflowDto(BaseModel):
-    id: int
-    name: str
-    description: str
-    is_active: bool
-    actions: str
+    id: Optional[int]
+    name: Optional[str]
+    description: Optional[str]
+    is_active: Optional[bool]
+    actions: Optional[str]
 
 
 class UserCreate(UserBase):
@@ -52,9 +54,9 @@ def model_to_schema(workflow: models.WorkFlow):
 
 def schema_to_model(workflow: WorkflowDto):
     model = models.WorkFlow()
-    workflow.id = workflow.id
-    workflow.name = workflow.name
-    workflow.description = workflow.description
-    workflow.is_active = workflow.is_active
-    workflow.actions = workflow.actions
+    model.id = workflow.id
+    model.name = workflow.name
+    model.description = workflow.description
+    model.is_active = workflow.is_active
+    model.actions = workflow.actions
     return model

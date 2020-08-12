@@ -34,7 +34,7 @@ def get_db():
         db.close()
 
 
-@app.post("/users/", response_model=schemas.User, status_code=status.HTTP_201_CREATED)
+@app.post("/api/users/", response_model=schemas.User, status_code=status.HTTP_201_CREATED)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
@@ -42,13 +42,13 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return crud.create_user(db=db, user=user)
 
 
-@app.get("/users/", response_model=List[schemas.User], status_code=status.HTTP_200_OK)
+@app.get("/api/users/", response_model=List[schemas.User], status_code=status.HTTP_200_OK)
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud.get_users(db, skip=skip, limit=limit)
     return users
 
 
-@app.get("/users/{user_id}", response_model=schemas.User, status_code=status.HTTP_200_OK)
+@app.get("/api/users/{user_id}", response_model=schemas.User, status_code=status.HTTP_200_OK)
 def read_user(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user_id=user_id)
     if db_user is None:
@@ -56,7 +56,7 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return db_user
 
 
-@app.post("/login", response_model=schemas.SessionToken, status_code=status.HTTP_200_OK)
+@app.post("/api/login", response_model=schemas.SessionToken, status_code=status.HTTP_200_OK)
 def login(user: schemas.Login, db: Session = Depends(get_db)):
     token = crud.user_authenticate(db, user)
 
@@ -66,20 +66,24 @@ def login(user: schemas.Login, db: Session = Depends(get_db)):
     return token
 
 
-@app.get("/workflows/", response_model=List[schemas.WorkflowDto], status_code=status.HTTP_200_OK)
+@app.get("/api/workflows/", response_model=List[schemas.WorkflowDto], status_code=status.HTTP_200_OK)
 def read_workflows(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     workflows = crud.get_workflows(db, skip=skip, limit=limit)
-    return workflows
+    responses = []
+    for wf in workflows:
+        responses.append(schemas.model_to_schema(wf))
+    return responses
 
 
-@app.get("/workflows/{workflow_id}", response_model=schemas.WorkflowDto, status_code=status.HTTP_200_OK)
+@app.get("/api/workflows/{workflow_id}", response_model=schemas.WorkflowDto, status_code=status.HTTP_200_OK)
 def read_user(workflow_id: int, db: Session = Depends(get_db)):
     model = crud.get_workflow(db, workflow_id=workflow_id)
     if model is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workflow not found")
-    return model
+    return schemas.model_to_schema(model)
 
 
-@app.post("/workflows/", response_model=schemas.WorkflowDto, status_code=status.HTTP_201_CREATED)
+@app.post("/api/workflows/", response_model=schemas.WorkflowDto, status_code=status.HTTP_201_CREATED)
 def create_user(workflow: schemas.WorkflowDto, db: Session = Depends(get_db)):
-    return crud.create_workflow(db=db, workflow=workflow)
+    created = crud.create_workflow(db=db, workflow=workflow)
+    return schemas.model_to_schema(created)

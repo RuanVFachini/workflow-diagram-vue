@@ -20,4 +20,4 @@ class WorkFlow(Base):
     name = Column(String, index=True)
     description = Column(String, index=False)
     is_active = Column(Boolean, default=True)
-    actions = Column(BLOB)
+    actions = Column(String)
