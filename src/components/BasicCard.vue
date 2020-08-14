@@ -48,12 +48,12 @@ export default {
         "flex-direction": "column",
         "justify-content": "space-around",
         "align-content": "center",
-        "border-bottom": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
-        "border-top": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
+        "border-bottom": "solid " + 1 * this.scale + "px rgb(46, 43, 43)",
+        "border-top": "solid " + 1 * this.scale + "px rgb(46, 43, 43)",
         "border-top-left-radius": 5 * this.scale + "px",
         "border-top-right-radius": 5 * this.scale + "px",
-        "border-left": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
-        "border-right": "solid " + 2 * this.scale + "px rgb(46, 43, 43)",
+        "border-left": "solid " + 1 * this.scale + "px rgb(46, 43, 43)",
+        "border-right": "solid " + 1 * this.scale + "px rgb(46, 43, 43)",
       };
     },
 
@@ -67,9 +67,9 @@ export default {
         "flex-direction": "row",
         "justify-content": "space-between",
         "align-content": "center",
-        "border-bottom": 2 * this.scale + "px solid black",
-        "border-left": 2 * this.scale + "px solid black",
-        "border-right": 2 * this.scale + "px solid black",
+        "border-bottom": 1 * this.scale + "px solid black",
+        "border-left": 1 * this.scale + "px solid black",
+        "border-right": 1 * this.scale + "px solid black",
       };
     },
 

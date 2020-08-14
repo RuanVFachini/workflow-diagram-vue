@@ -35,8 +35,38 @@
           @mouseup.prevent="unselect"
           @mousewheel="zoom"
         >
+          <defs>
+            <pattern
+              id="smallGrid"
+              width="8"
+              height="8"
+              patternUnits="userSpaceOnUse"
+            >
+              <path
+                d="M 8 0 L 0 0 0 8"
+                fill="none"
+                stroke="gray"
+                stroke-width="0.5"
+              />
+            </pattern>
+            <pattern
+              id="grid"
+              width="80"
+              height="80"
+              patternUnits="userSpaceOnUse"
+            >
+              <rect width="80" height="80" fill="url(#smallGrid)" />
+              <path
+                d="M 80 0 L 0 0 0 80"
+                fill="none"
+                stroke="gray"
+                stroke-width="1"
+              />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid)" />
           <DiagramCard
-            v-for="action in actions"
+            v-for="action in diagram.actions"
             :key="action.name"
             :value="action"
             :scale="scale"
@@ -47,11 +77,12 @@
             @select="select($event)"
             @remove="removeAction"
             @edit="$emit('edit-item', $event)"
+            @clone="cloneAction"
             @unselect="unselect"
             @click-port="setSelectedPort"
           />
           <LinkLine
-            v-for="link in links"
+            v-for="link in diagram.links"
             :key="link.id"
             :value="link"
             :scale="scale"
@@ -61,7 +92,7 @@
         </svg>
       </div>
       <LigaturesMap
-        :values="links"
+        :values="diagram.links"
         @drop-item="dropLink($event)"
         @in-ligature="inLigature($event)"
         @out-ligature="outLigature($event)"
@@ -74,11 +105,12 @@
 import DiagramCard from "./DiagramCard";
 import LinkLine from "./LinkLine";
 import LigaturesMap from "./LigaturesMap";
+import lodash from "lodash";
 
 export default {
   name: "Diagram",
 
-  props: ["actions"],
+  props: ["diagram"],
 
   components: {
     DiagramCard,
@@ -87,13 +119,12 @@ export default {
   },
 
   model: {
-    prop: "actions",
+    prop: "diagram",
     event: "change",
   },
 
   data() {
     return {
-      links: [],
       cardWidth: 250,
       cardHeight: 150,
       prevPos: null,
@@ -112,17 +143,35 @@ export default {
 
   methods: {
     Clear() {
-      this.actions = [];
-      this.links = [];
+      this.diagram.actions = [];
+      this.diagram.links = [];
     },
 
     removeAction(action) {
       let index = this.getActionIdByName(action.name);
-      this.actions.splice(index, 1);
+      this.diagram.actions.splice(index, 1);
+    },
+
+    cloneAction(action) {
+      let newAction = lodash.cloneDeep(action);
+      newAction.name = newAction.name + "-copy";
+      if (newAction.input) {
+        newAction.input = {};
+      }
+      if (newAction.output) {
+        newAction.output = {};
+      }
+      if (newAction.alterput) {
+        newAction.alterput = {};
+      }
+
+      newAction.x = newAction.x + 50;
+      newAction.y = newAction.y + 50;
+      this.diagram.actions.push(newAction);
     },
 
     getActionIdByName(name) {
-      return this.actions.findIndex((act) => act.name == name);
+      return this.diagram.actions.findIndex((act) => act.name == name);
     },
 
     inLigature(event) {
@@ -185,7 +234,7 @@ export default {
       newAct.x = newAct.x > 0 ? newAct.x : 0;
       newAct.y = newAct.y > 0 ? newAct.y : 0;
 
-      this.actions.push(newAct);
+      this.diagram.actions.push(newAct);
     },
 
     setSelectedLine(event) {
@@ -193,9 +242,9 @@ export default {
     },
 
     dropLink(event) {
-      const index = this.links.findIndex((l) => l.id == event);
-      this.removeActionLink(this.links[index]);
-      this.links.splice(index, 1);
+      const index = this.diagram.links.findIndex((l) => l.id == event);
+      this.removeActionLink(this.diagram.links[index]);
+      this.diagram.links.splice(index, 1);
     },
 
     removeActionLink(relationship) {
@@ -208,7 +257,7 @@ export default {
       let name = "";
       while (exists >= 0) {
         name = "new-action-" + count;
-        exists = this.actions.findIndex((act) => act.name === name);
+        exists = this.diagram.actions.findIndex((act) => act.name === name);
         count++;
       }
       return name;
@@ -278,7 +327,7 @@ export default {
             output: this.stage.output,
           };
 
-          this.links.push(link);
+          this.diagram.links.push(link);
           this.stage = [];
         } else if (
           this.stage.input &&
@@ -291,14 +340,14 @@ export default {
             alterput: this.stage.alterput,
           };
 
-          this.links.push(link);
+          this.diagram.links.push(link);
           this.stage = [];
         }
       }
     },
 
     getLinkId() {
-      return "link_" + new Date().getTime() + "_" + this.links.length;
+      return "link_" + new Date().getTime() + "_" + this.diagram.links.length;
     },
 
     findLink(link, type) {
@@ -306,16 +355,16 @@ export default {
       let index = -1;
       switch (type) {
         case "A":
-          index = this.links.findIndex(
+          index = this.diagram.links.findIndex(
             (l) => l.input === link.input && l.alterput === link.alterput
           );
-          linkObj = this.links[index];
+          linkObj = this.diagram.links[index];
           break;
         case "O":
-          index = this.links.findIndex(
+          index = this.diagram.links.findIndex(
             (l) => l.input === link.input && l.output === link.output
           );
-          linkObj = this.links[index];
+          linkObj = this.diagram.links[index];
           break;
       }
 
@@ -400,6 +449,7 @@ export default {
 #main-grid {
   width: 100%;
   height: 100%;
+
   background-color: brown;
 }
 
@@ -420,5 +470,8 @@ export default {
 
 .body-center {
   width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: column;
 }
 </style>

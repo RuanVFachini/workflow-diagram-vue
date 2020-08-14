@@ -30,6 +30,6 @@ export default {
 }
 
 .content-div {
-  height: fit-content;
+  height: 100%;
 }
 </style>

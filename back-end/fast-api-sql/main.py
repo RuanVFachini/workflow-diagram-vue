@@ -83,6 +83,22 @@ def read_user(workflow_id: int, db: Session = Depends(get_db)):
     return schemas.model_to_schema(model)
 
 
+@app.put("/api/workflows/{workflow_id}/change", status_code=status.HTTP_200_OK)
+def read_user(workflow_id: int, db: Session = Depends(get_db)):
+    status = crud.get_change_status(db, workflow_id=workflow_id)
+    if status:
+        return {status: True}
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workflow not found")
+
+
+@app.delete("/api/workflows/{workflow_id}", status_code=status.HTTP_200_OK)
+def read_user(workflow_id: int, db: Session = Depends(get_db)):
+    status = crud.delete_workflow(db, workflow_id=workflow_id)
+    if status:
+        return {status: True}
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workflow not found")
+
+
 @app.post("/api/workflows/", response_model=schemas.WorkflowDto, status_code=status.HTTP_201_CREATED)
 def create_user(workflow: schemas.WorkflowDto, db: Session = Depends(get_db)):
     created = crud.create_workflow(db=db, workflow=workflow)

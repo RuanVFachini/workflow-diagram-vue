@@ -31,6 +31,15 @@
         </li>
         <li class="list-item" :style="listItemStyle()">
           <b-icon
+            @click="$emit('clone', value)"
+            class="card-action"
+            icon="subtract"
+            variant="secondary"
+            :scale="iconScale"
+          ></b-icon>
+        </li>
+        <li class="list-item" :style="listItemStyle()">
+          <b-icon
             @click="$emit('remove', value)"
             class="card-action"
             icon="trash"
@@ -165,7 +174,7 @@ export default {
     },
 
     listStyle() {
-      let twoPixels = 2 * this.scale;
+      let twoPixels = 1 * this.scale;
       let height = 45 * this.scale;
       return {
         margin: 0 + "px",

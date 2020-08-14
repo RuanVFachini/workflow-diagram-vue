@@ -1,5 +1,5 @@
 <template>
-  <g :id="value.id">
+  <g :id="value.id" class="line-group">
     <rect
       :id="value.id + '-1'"
       :x="getLine().input.x1 - getLine().diff"
@@ -56,7 +56,7 @@ export default {
       if (this.value.onSelection) {
         styleLine = "orange";
       }
-      return "stroke:" + styleLine + ";stroke-width:" + 4 * this.scale;
+      return "stroke:" + styleLine + ";stroke-width:" + 2 * this.scale;
     },
   },
   methods: {
@@ -68,7 +68,7 @@ export default {
         ? this.value.output.ref
         : this.value.alterput.ref;
 
-      let portInX = 19;
+      let portInX = 18;
       let portInY = 105;
 
       let portOutX = 0;
@@ -168,3 +168,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.line-group {
+  pointer-events: none;
+}
+</style>
