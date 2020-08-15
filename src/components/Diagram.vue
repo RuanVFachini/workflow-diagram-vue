@@ -139,8 +139,6 @@ export default {
       },
       selectedLine: null,
       midleMouseBtnPress: false,
-      onSelectMode: false,
-      selectedActions:[]
     };
   },
 
@@ -294,10 +292,6 @@ export default {
         this.onMove.select = false;
       }
 
-      if (this.onSelectMode && this.selectedActions.length == 0) {
-        this.onSelectMode = false
-      }
-
       this.onMove = null;
       this.onPan = false;
     },
@@ -413,10 +407,6 @@ export default {
       if (event.button == 1 && event.buttons == 4) {
         this.tryMoveToInitialPanPosition()
       }
-
-      if (event.button == 1 && event.buttons == 4) {
-        this.createSelectArea()
-      }
     },
 
     tryMoveToInitialPanPosition() {
@@ -428,10 +418,6 @@ export default {
         setTimeout(() => {
           this.midleMouseBtnPress = false;
         }, 300);
-    },
-
-    createSelectArea() {
-      this.onSelectMode = true
     },
 
     panViewStart(event) {
