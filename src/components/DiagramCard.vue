@@ -19,7 +19,20 @@
           {{ value.title | upperCase }}
         </p>
       </div>
-      <ul class="act-menu" :style="listStyle()">
+      <div class="act-menu-region">
+      <ul class="act-menu-left" :style="listLeftStyle()">
+        <li class="list-item" :style="listItemStyle()">
+          <b-icon
+            class="card-action"
+            :icon="flagIcon()"
+            variant="primary"
+            :scale="iconScale"
+            :style="flagStyle()"
+            @click="$emit('set-root', value)"
+          ></b-icon>
+        </li>
+      </ul>
+      <ul class="act-menu-right" :style="listRightStyle()">
         <li class="list-item" :style="listItemStyle()">
           <b-icon
             @click="$emit('edit', value)"
@@ -48,6 +61,7 @@
           ></b-icon>
         </li>
       </ul>
+      </div>
       <div :style="cardBodyStyle()" draggable="false">
         <div v-if="value.input" :style="inputsStyle()">
           <div class="input">
@@ -166,16 +180,40 @@ export default {
     },
 
     listItemStyle() {
-      let margin = 15 * this.scale;
+      let margin
+      if (this.scale > 0.75) {
+        margin = 15 * this.scale;
+      } else if (this.scale > 0.5){
+        margin = 7 * this.scale;
+      } else {
+        margin = this.scale;
+      }
+      
       return {
         "margin-left": margin + "px",
         "margin-right": margin + "px",
       };
     },
 
-    listStyle() {
+    listRightStyle() {
       let twoPixels = 1 * this.scale;
-      let height = 45 * this.scale;
+      let height = 30 * this.scale;
+      return {
+        margin: 0 + "px",
+        height: height + "px",
+        "padding-left": 0 + "px",
+        "padding-right": 0 + "px",
+        "padding-top": twoPixels + "px",
+        "padding-bottom": twoPixels + "px",
+        "background-color": "white",
+        "border-right": twoPixels + "px solid black",
+        "border-bottom": twoPixels + "px solid black",
+      };
+    },
+
+    listLeftStyle () {
+      let twoPixels = 1 * this.scale;
+      let height = 30 * this.scale;
       return {
         margin: 0 + "px",
         height: height + "px",
@@ -185,19 +223,39 @@ export default {
         "padding-bottom": twoPixels + "px",
         "background-color": "white",
         "border-left": twoPixels + "px solid black",
-        "border-right": twoPixels + "px solid black",
         "border-bottom": twoPixels + "px solid black",
       };
     },
+
+    flagStyle() {
+      if (!this.value.input && !this.value.alterput) {
+        return {display: "unset"}
+      }
+      return {display: "none"}
+    },
+
+    flagIcon() {
+      if (this.value.isRoot) {
+        return "flag-fill"
+      }
+      return "flag"
+    }
   },
 };
 </script>
 
 <style scoped>
-.act-menu {
+.act-menu-right {
   list-style: none;
   display: flex;
   justify-content: flex-end;
+}
+
+.act-menu-left {
+  list-style: none;
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
 }
 
 .list-item {
@@ -209,5 +267,11 @@ export default {
 
 .card-action:hover {
   cursor: pointer;
+}
+
+.act-menu-region {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 </style>

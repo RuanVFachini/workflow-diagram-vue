@@ -54,7 +54,7 @@ export default {
       let styleLine = "black";
 
       if (this.value.onSelection) {
-        styleLine = "orange";
+        styleLine = "yellow";
       }
       return "stroke:" + styleLine + ";stroke-width:" + 2 * this.scale;
     },
@@ -107,7 +107,7 @@ export default {
         };
       } else {
         portOutX = 125;
-        portOutY = 133;
+        portOutY = 135;
 
         let midX = 0;
 

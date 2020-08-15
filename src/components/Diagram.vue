@@ -80,6 +80,7 @@
             @clone="cloneAction"
             @unselect="unselect"
             @click-port="setSelectedPort"
+            @set-root="setRootAction"
           />
           <LinkLine
             v-for="link in diagram.links"
@@ -138,6 +139,8 @@ export default {
       },
       selectedLine: null,
       midleMouseBtnPress: false,
+      onSelectMode: false,
+      selectedActions:[]
     };
   },
 
@@ -175,11 +178,11 @@ export default {
     },
 
     inLigature(event) {
-      this.changeColorLinkLine(event, "black", "red");
+      this.changeColorLinkLine(event, "black", "yellow");
     },
 
     outLigature(event) {
-      this.changeColorLinkLine(event, "red", "black");
+      this.changeColorLinkLine(event, "yellow", "black");
     },
 
     changeColorLinkLine(event, oldValue, newValue) {
@@ -226,6 +229,7 @@ export default {
       }
 
       if (type === 3) {
+        newAct.isRoot = this.checkRootAction()
         newAct.output = {};
         newAct.input = false;
         newAct.alterput = false;
@@ -235,6 +239,16 @@ export default {
       newAct.y = newAct.y > 0 ? newAct.y : 0;
 
       this.diagram.actions.push(newAct);
+    },
+
+    checkRootAction () {
+      let rootExist = false
+      this.diagram.actions.forEach(act => {
+        if (act.isRoot) {
+          rootExist = true
+        }
+      });
+      return !rootExist
     },
 
     setSelectedLine(event) {
@@ -280,6 +294,10 @@ export default {
         this.onMove.select = false;
       }
 
+      if (this.onSelectMode && this.selectedActions.length == 0) {
+        this.onSelectMode = false
+      }
+
       this.onMove = null;
       this.onPan = false;
     },
@@ -312,6 +330,13 @@ export default {
     setSelectedPort(event, type) {
       this.stage[type] = event;
       this.checkLink();
+    },
+
+    setRootAction(action) {
+      this.diagram.actions.forEach(act => {
+        act.isRoot = false
+      })
+      action.isRoot = true
     },
 
     checkLink() {
@@ -375,9 +400,9 @@ export default {
     },
 
     zoom(event) {
-      if (event.wheelDelta > 0 && this.scale < 1) {
+      if (event.wheelDelta > 0.4 && this.scale < 1) {
         this.scale += 0.1;
-      } else if (event.wheelDelta < 0 && this.scale > 0.3) {
+      } else if (event.wheelDelta < 0 && this.scale > 0.4) {
         this.scale -= 0.1;
       }
     },
@@ -386,7 +411,16 @@ export default {
       this.panViewStart(event);
 
       if (event.button == 1 && event.buttons == 4) {
-        if (this.midleMouseBtnPress) {
+        this.tryMoveToInitialPanPosition()
+      }
+
+      if (event.button == 1 && event.buttons == 4) {
+        this.createSelectArea()
+      }
+    },
+
+    tryMoveToInitialPanPosition() {
+      if (this.midleMouseBtnPress) {
           this.trasnlateToInit();
         }
 
@@ -394,7 +428,10 @@ export default {
         setTimeout(() => {
           this.midleMouseBtnPress = false;
         }, 300);
-      }
+    },
+
+    createSelectArea() {
+      this.onSelectMode = true
     },
 
     panViewStart(event) {

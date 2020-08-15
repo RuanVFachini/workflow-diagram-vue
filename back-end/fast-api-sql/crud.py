@@ -70,6 +70,21 @@ def get_change_status(db: Session, workflow_id: int):
     return True
 
 
+def update_workflow(db: Session, workflow_id: int, workflow: schemas.WorkflowDto):
+    model = db.query(models.WorkFlow).filter(
+        models.WorkFlow.id == workflow.id).first()
+    if model is None:
+        return False
+    model.name = workflow.name
+    model.description = workflow.description
+    model.actions = workflow.actions
+    model.is_active = workflow.is_active
+    db.add(model)
+    db.commit()
+    db.refresh(model)
+    return model
+
+
 def get_workflows(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.WorkFlow).offset(skip).limit(limit).all()
 
