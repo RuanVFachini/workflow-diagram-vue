@@ -3,22 +3,60 @@
     <div class="diagram-menu">
       <b-nav class="p-1">
         <b-list-group>
-          <b-list-group-item @click="trasnlateToInit">
-            Inicio
+          <b-list-group-item
+            class="sidebar-item"
+            @click="trasnlateToInit"
+            v-b-tooltip.hover.right="
+              'Move diagram grid to init position (x = 0, y = 0)'
+            "
+          >
+            Initial Position
           </b-list-group-item>
-          <b-list-group-item @click="Clear">
-            Limpar
+          <b-list-group-item
+            class="sidebar-item"
+            @click="Clear"
+            v-b-tooltip.hover.right="'Clear diagram grid'"
+          >
+            Clear
           </b-list-group-item>
-          <b-list-group-item draggable="true" @dragend="dropNew($event, 0)">
+          <b-list-group-item
+            class="sidebar-item-drag"
+            draggable="true"
+            @dragend="dropNew($event, 0)"
+            v-b-tooltip.hover.right="
+              'Drop a action with input and output ports on diagram grid'
+            "
+          >
             Two Ways
           </b-list-group-item>
-          <b-list-group-item draggable="true" @dragend="dropNew($event, 1)">
+          <b-list-group-item
+            class="sidebar-item-drag"
+            draggable="true"
+            @dragend="dropNew($event, 1)"
+            v-b-tooltip.hover.right="
+              'Drop a action with input, output and alterput ports on diagram grid'
+            "
+          >
             Three Ways
           </b-list-group-item>
-          <b-list-group-item draggable="true" @dragend="dropNew($event, 2)">
+          <b-list-group-item
+            class="sidebar-item-drag"
+            draggable="true"
+            @dragend="dropNew($event, 2)"
+            v-b-tooltip.hover.right="
+              'Drop a action with oly a input port on diagram grid'
+            "
+          >
             Single Way In
           </b-list-group-item>
-          <b-list-group-item draggable="true" @dragend="dropNew($event, 3)">
+          <b-list-group-item
+            class="sidebar-item-drag"
+            draggable="true"
+            @dragend="dropNew($event, 3)"
+            v-b-tooltip.hover.right="
+              'Drop a action with oly a output port on diagram grid'
+            "
+          >
             Single Way Out
           </b-list-group-item>
         </b-list-group>
@@ -81,6 +119,7 @@
             @unselect="unselect"
             @click-port="setSelectedPort"
             @set-root="setRootAction"
+            @edit-description="editActionDescription"
           />
           <LinkLine
             v-for="link in diagram.links"
@@ -150,7 +189,20 @@ export default {
 
     removeAction(action) {
       let index = this.getActionIdByName(action.name);
+      this.removeActionLinks(action);
       this.diagram.actions.splice(index, 1);
+    },
+
+    removeActionLinks(action) {
+      this.diagram.links.forEach((link) => {
+        if (link.input && link.input.ref.name == action.name) {
+          this.dropLink(link.id);
+        } else if (link.output && link.output.ref.name == action.name) {
+          this.dropLink(link.id);
+        } else if (link.alterput && link.alterput.ref.name == action.name) {
+          this.dropLink(link.id);
+        }
+      });
     },
 
     cloneAction(action) {
@@ -227,7 +279,7 @@ export default {
       }
 
       if (type === 3) {
-        newAct.isRoot = this.checkRootAction()
+        newAct.isRoot = this.checkRootAction();
         newAct.output = {};
         newAct.input = false;
         newAct.alterput = false;
@@ -239,14 +291,14 @@ export default {
       this.diagram.actions.push(newAct);
     },
 
-    checkRootAction () {
-      let rootExist = false
-      this.diagram.actions.forEach(act => {
+    checkRootAction() {
+      let rootExist = false;
+      this.diagram.actions.forEach((act) => {
         if (act.isRoot) {
-          rootExist = true
+          rootExist = true;
         }
       });
-      return !rootExist
+      return !rootExist;
     },
 
     setSelectedLine(event) {
@@ -255,12 +307,8 @@ export default {
 
     dropLink(event) {
       const index = this.diagram.links.findIndex((l) => l.id == event);
-      this.removeActionLink(this.diagram.links[index]);
       this.diagram.links.splice(index, 1);
-    },
-
-    removeActionLink(relationship) {
-      console.log(relationship);
+      this.stage = [];
     },
 
     findAvaliableName() {
@@ -322,41 +370,64 @@ export default {
     },
 
     setSelectedPort(event, type) {
+      if (this.alreadyOnStage(event.name)) {
+        this.stage = [];
+      }
       this.stage[type] = event;
-      this.checkLink();
+      this.buildLink(this.stage);
+    },
+
+    alreadyOnStage(actName) {
+      if (
+        this.stage.forEach((stg) => {
+          stg.ref.name === actName;
+          return true;
+        })
+      )
+        return false;
     },
 
     setRootAction(action) {
-      this.diagram.actions.forEach(act => {
-        act.isRoot = false
-      })
-      action.isRoot = true
+      this.diagram.actions.forEach((act) => {
+        act.isRoot = false;
+      });
+      action.isRoot = true;
     },
 
-    checkLink() {
-      if (this.stage) {
+    buildLink(param) {
+      if (param) {
         if (
-          this.stage.input &&
-          this.stage.output &&
-          !this.findLink(this.stage, "O")
+          (param &&
+            param.input &&
+            param.output &&
+            param.input.ref.name === param.output.ref.name) ||
+          (param &&
+            param.input &&
+            param.alterput &&
+            param.input.ref.name === param.alterput.ref.name)
         ) {
+          this.stage = [];
+          return;
+        }
+
+        if (param.input && param.output && !this.findLink(param, "O")) {
           const link = {
             id: this.getLinkId(),
-            input: this.stage.input,
-            output: this.stage.output,
+            input: param.input,
+            output: param.output,
           };
 
           this.diagram.links.push(link);
           this.stage = [];
         } else if (
-          this.stage.input &&
-          this.stage.alterput &&
-          !this.findLink(this.stage, "A")
+          param.input &&
+          param.alterput &&
+          !this.findLink(param, "A")
         ) {
           const link = {
             id: this.getLinkId(),
-            input: this.stage.input,
-            alterput: this.stage.alterput,
+            input: param.input,
+            alterput: param.alterput,
           };
 
           this.diagram.links.push(link);
@@ -405,19 +476,19 @@ export default {
       this.panViewStart(event);
 
       if (event.button == 1 && event.buttons == 4) {
-        this.tryMoveToInitialPanPosition()
+        this.tryMoveToInitialPanPosition();
       }
     },
 
     tryMoveToInitialPanPosition() {
       if (this.midleMouseBtnPress) {
-          this.trasnlateToInit();
-        }
+        this.trasnlateToInit();
+      }
 
-        this.midleMouseBtnPress = true;
-        setTimeout(() => {
-          this.midleMouseBtnPress = false;
-        }, 300);
+      this.midleMouseBtnPress = true;
+      setTimeout(() => {
+        this.midleMouseBtnPress = false;
+      }, 300);
     },
 
     panViewStart(event) {
@@ -496,5 +567,13 @@ export default {
   height: 100%;
   display: flex;
   flex-flow: column;
+}
+
+.sidebar-item:hover {
+  cursor: pointer;
+}
+
+.sidebar-item-drag:hover {
+  cursor: grab;
 }
 </style>

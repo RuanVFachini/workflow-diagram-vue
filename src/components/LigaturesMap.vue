@@ -1,7 +1,7 @@
 <template>
   <div class="list-ligatures">
     <div class="p-2">
-      <h2>Ligações</h2>
+      <h2>Ligatures</h2>
     </div>
     <b-list-group v-for="link in values" :key="link.id" class="pl-2 pr-2">
       <b-list-group-item
@@ -14,7 +14,10 @@
         @mouseleave="$emit('out-ligature', link.id)"
         @click="click"
       >
-        <div class="group-list-link">
+        <div
+          class="group-list-link"
+          v-b-tooltip.hover.left="'Drop out to delete link'"
+        >
           <p class="item-list-link">
             {{ getOutputDescription(link) | limitSize }}
           </p>
@@ -24,7 +27,9 @@
               variant="info"
             ></b-icon-arrow-right-square-fill>
           </p>
-          <p class="item-list-link">{{ link.input.ref.name | limitSize }}</p>
+          <p class="item-list-link">
+            {{ link.input.ref.description | limitSize }}
+          </p>
         </div>
       </b-list-group-item>
     </b-list-group>
@@ -60,9 +65,9 @@ export default {
 
     getOutputDescription(link) {
       if (link.output) {
-        return link.output.ref.name;
+        return link.output.ref.description;
       }
-      return link.alterput.ref.name;
+      return link.alterput.ref.description;
     },
   },
 };

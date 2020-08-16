@@ -15,52 +15,59 @@
         @mouseup="$emit('unselect')"
         @mouseleave="$emit('unselect')"
       >
-        <p :style="styleP()">
+        <p
+          :style="styleP()"
+          v-b-tooltip.hover.bottom="'Double click to edit description'"
+        >
           {{ value.title | upperCase }}
         </p>
       </div>
       <div class="act-menu-region">
-      <ul class="act-menu-left" :style="listLeftStyle()">
-        <li class="list-item" :style="listItemStyle()">
-          <b-icon
-            class="card-action"
-            :icon="flagIcon()"
-            variant="primary"
-            :scale="iconScale"
-            :style="flagStyle()"
-            @click="$emit('set-root', value)"
-          ></b-icon>
-        </li>
-      </ul>
-      <ul class="act-menu-right" :style="listRightStyle()">
-        <li class="list-item" :style="listItemStyle()">
-          <b-icon
-            @click="$emit('edit', value)"
-            class="card-action"
-            icon="pencil"
-            variant="primary"
-            :scale="iconScale"
-          ></b-icon>
-        </li>
-        <li class="list-item" :style="listItemStyle()">
-          <b-icon
-            @click="$emit('clone', value)"
-            class="card-action"
-            icon="subtract"
-            variant="secondary"
-            :scale="iconScale"
-          ></b-icon>
-        </li>
-        <li class="list-item" :style="listItemStyle()">
-          <b-icon
-            @click="$emit('remove', value)"
-            class="card-action"
-            icon="trash"
-            variant="danger"
-            :scale="iconScale"
-          ></b-icon>
-        </li>
-      </ul>
+        <ul class="act-menu-left" :style="listLeftStyle()">
+          <li class="list-item" :style="listItemStyle()">
+            <b-icon
+              class="card-action"
+              :icon="flagIcon()"
+              variant="primary"
+              :scale="iconScale"
+              :style="flagStyle()"
+              @click="$emit('set-root', value)"
+              v-b-tooltip.hover.bottom="'Set this action to start'"
+            ></b-icon>
+          </li>
+        </ul>
+        <ul class="act-menu-right" :style="listRightStyle()">
+          <li class="list-item" :style="listItemStyle()">
+            <b-icon
+              @click="$emit('edit', value)"
+              class="card-action"
+              icon="pencil"
+              variant="primary"
+              :scale="iconScale"
+              v-b-tooltip.hover.bottom="'Open action Edition'"
+            ></b-icon>
+          </li>
+          <li class="list-item" :style="listItemStyle()">
+            <b-icon
+              @click="$emit('clone', value)"
+              class="card-action"
+              icon="subtract"
+              variant="secondary"
+              :scale="iconScale"
+              v-b-tooltip.hover.bottom="'Clone this action in diagram'"
+            ></b-icon>
+          </li>
+          <li class="list-item" :style="listItemStyle()">
+            <b-icon
+              @click="$emit('remove', value)"
+              class="card-action"
+              icon="trash"
+              variant="danger"
+              :scale="iconScale"
+              v-b-tooltip.hover.bottom="'Remove this action from diagram'"
+            ></b-icon>
+          </li>
+        </ul>
       </div>
       <div :style="cardBodyStyle()" draggable="false">
         <div v-if="value.input" :style="inputsStyle()">
@@ -70,6 +77,7 @@
               type="checkbox"
               :style="inputStyle()"
               @click.prevent="$emit('click-port', cardParams(), 'input')"
+              v-b-tooltip.hover.bottom="'Connect this card input port with ...'"
             />
             <h5 :style="styleH5()">
               {{ "I" | upperCase }}
@@ -83,6 +91,9 @@
               type="checkbox"
               :style="alterputStyle()"
               @click.prevent="$emit('click-port', cardParams(), 'alterput')"
+              v-b-tooltip.hover.bottom="
+                'Connect this card alterput port with ...'
+              "
             />
             <h5 :style="styleH5()">
               {{ "A" | upperCase }}
@@ -99,6 +110,9 @@
               type="checkbox"
               :style="inputStyle()"
               @click.prevent="$emit('click-port', cardParams(), 'output')"
+              v-b-tooltip.hover.bottom="
+                'Connect this card output port with ...'
+              "
             />
           </div>
         </div>
@@ -180,15 +194,15 @@ export default {
     },
 
     listItemStyle() {
-      let margin
+      let margin;
       if (this.scale > 0.75) {
         margin = 15 * this.scale;
-      } else if (this.scale > 0.5){
+      } else if (this.scale > 0.5) {
         margin = 7 * this.scale;
       } else {
         margin = this.scale;
       }
-      
+
       return {
         "margin-left": margin + "px",
         "margin-right": margin + "px",
@@ -211,7 +225,7 @@ export default {
       };
     },
 
-    listLeftStyle () {
+    listLeftStyle() {
       let twoPixels = 1 * this.scale;
       let height = 30 * this.scale;
       return {
@@ -229,17 +243,17 @@ export default {
 
     flagStyle() {
       if (!this.value.input && !this.value.alterput) {
-        return {display: "unset"}
+        return { display: "unset" };
       }
-      return {display: "none"}
+      return { display: "none" };
     },
 
     flagIcon() {
       if (this.value.isRoot) {
-        return "flag-fill"
+        return "flag-fill";
       }
-      return "flag"
-    }
+      return "flag";
+    },
   },
 };
 </script>

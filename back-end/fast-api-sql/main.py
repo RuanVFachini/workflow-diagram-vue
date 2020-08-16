@@ -38,7 +38,8 @@ def get_db():
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
     return crud.create_user(db=db, user=user)
 
 
@@ -52,7 +53,8 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 def read_user(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user_id=user_id)
     if db_user is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return db_user
 
 
@@ -61,7 +63,8 @@ def login(user: schemas.Login, db: Session = Depends(get_db)):
     token = crud.user_authenticate(db, user)
 
     if token is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="credentials not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="credentials not found")
 
     return token
 
@@ -79,32 +82,37 @@ def read_workflows(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
 def read_workflow(workflow_id: int, db: Session = Depends(get_db)):
     model = crud.get_workflow(db, workflow_id=workflow_id)
     if model is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workflow not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workflow not found")
     return schemas.model_to_schema(model)
 
 
-@app.put("/api/workflows/{workflow_id}/change", status_code=status.HTTP_200_OK)
+@app.put("/api/workflows/{workflow_id}/change", status_code=status.HTTP_204_NO_CONTENT)
 def change_status_workflow(workflow_id: int, db: Session = Depends(get_db)):
     status = crud.get_change_status(db, workflow_id=workflow_id)
     if status:
         return {status: True}
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workflow not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                        detail="Workflow not found")
 
 
-@app.delete("/api/workflows/{workflow_id}", status_code=status.HTTP_200_OK)
+@app.delete("/api/workflows/{workflow_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_workflow(workflow_id: int, db: Session = Depends(get_db)):
     status = crud.delete_workflow(db, workflow_id=workflow_id)
     if status:
         return {status: True}
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workflow not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                        detail="Workflow not found")
 
 
-@app.put("/api/workflows/{workflow_id}", status_code=status.HTTP_204_NO_CONTENT)
-def update_workflow(workflow_id: int, workflow_dto:schemas.WorkflowDto, db: Session = Depends(get_db)):
-    status = crud.update_workflow(db, workflow_id=workflow_id, workflow=workflow_dto)
-    if status:
-        return {status: True}
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workflow not found")
+@app.put("/api/workflows/{workflow_id}", response_model=schemas.WorkflowDto, status_code=status.HTTP_200_OK)
+def update_workflow(workflow_id: int, workflow_dto: schemas.WorkflowDto, db: Session = Depends(get_db)):
+    model = crud.update_workflow(
+        db, workflow_id=workflow_id, workflow=workflow_dto)
+    if model:
+        return schemas.model_to_schema(model)
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                        detail="Workflow not found")
 
 
 @app.post("/api/workflows/", response_model=schemas.WorkflowDto, status_code=status.HTTP_201_CREATED)
