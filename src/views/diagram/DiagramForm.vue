@@ -28,12 +28,17 @@
 </template>
 
 <script>
-import axios from "axios";
 import clone from "lodash/clone";
+import { mapMutations } from 'vuex';
 
 export default {
   name: "DiagramForm",
-  data() {
+
+  created () {
+    this.loadDefaults()
+  },
+
+  data () {
     return {
       form: {
         id: null,
@@ -46,18 +51,24 @@ export default {
     };
   },
   methods: {
+    ...mapMutations(['addDiagram']),
+
     onSubmit(evt) {
       evt.preventDefault();
       const cloneData = clone(this.form);
-      cloneData.actions = JSON.stringify(cloneData.actions);
-      const data = JSON.stringify(cloneData);
-      axios
-        .post("http://localhost:8000/api/workflows", data)
-        .then(() => {
-          this.$emit("saved");
-        })
-        .catch((err) => console.log(err));
+      this.addDiagram(cloneData);
+      this.loadDefaults();
     },
+
+    loadDefaults () {
+      this.form = {
+        id: null,
+        name: "",
+        description: "",
+        is_active: true,
+        actions: [],
+      }
+    }
   },
 };
 </script>
