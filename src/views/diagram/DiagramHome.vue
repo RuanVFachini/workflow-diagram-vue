@@ -1,19 +1,17 @@
 <template>
   <div class="home">
     <div v-if="onEdit" class="main-display">
-      <Diagram v-model="diagram" @edit-item="openEdit">
+      <Diagram v-model="data" @edit-item="openEdit">
         <div class="diagram-menu">
           <b-nav pills>
             <b-button
               class="btn btn-danger"
               @click="clear"
-              v-b-tooltip.hover.bottom="'Clear Diagram'"
               >Clear</b-button
             >
             <b-button
               class="btn btn-info ml-2"
               @click="save"
-              v-b-tooltip.hover.bottom="'Save Diagram'"
               >Save</b-button
             >
           </b-nav>
@@ -21,8 +19,8 @@
       >
     </div>
     <div v-else class="main-grid">
-      <DiagramForm @saved="updateGrid"></DiagramForm>
-      <DiagramGrid :update="update" @edit="editAction"></DiagramGrid>
+      <DiagramForm></DiagramForm>
+      <DiagramGrid @edit="editAction"></DiagramGrid>
     </div>
   </div>
 </template>
@@ -32,7 +30,7 @@ import Diagram from "../../components/Diagram";
 import DiagramGrid from "./DiagramGrid";
 import DiagramForm from "./DiagramForm";
 import cloneDeep from "lodash/cloneDeep";
-import Axios from "axios";
+import { mapMutations } from 'vuex';
 
 export default {
   name: "DiagramHome",
@@ -45,68 +43,50 @@ export default {
   data() {
     return {
       onEdit: false,
-      diagram: {
+      diagemRef: {},
+      data: {
         actions: [],
         links: [],
       },
-      update: false,
-      isSaving: false,
     };
   },
 
   methods: {
+    ...mapMutations(['saveDiagram']),
+
     openEdit(event) {
       console.log(event);
     },
-    updateGrid() {
-      this.update = !this.update;
-    },
-    editAction(event) {
-      let diagram = cloneDeep(event);
-      const data = JSON.parse(diagram.actions);
+
+    editAction(diagram) {
+      this.diagemRef = cloneDeep(diagram);
+      let diagramBuilder = []
+      const data = this.diagemRef.data;
       if (data.actions) {
-        diagram.actions = data.actions;
+        diagramBuilder.actions = data.actions;
       } else {
-        diagram.actions = [];
+        diagramBuilder.actions = [];
       }
 
       if (data.links) {
-        diagram.links = data.links;
+        diagramBuilder.links = data.links;
       } else {
-        diagram.links = [];
+        diagramBuilder.links = [];
       }
 
-      this.rebuildRefs(diagram);
+      this.rebuildRefs(diagramBuilder);
 
-      this.diagram = diagram;
+      this.diagram = diagramBuilder;
       this.onEdit = true;
     },
     clear() {
-      this.diagram.actions = [];
-      this.diagram.links = [];
+      this.data.actions = [];
+      this.data.links = [];
     },
     save() {
-      this.isSaving = true;
-
-      try {
-        let diagramToSave = cloneDeep(this.diagram);
-        const data = {
-          actions: diagramToSave.actions,
-          links: diagramToSave.links,
-        };
-
-        diagramToSave.actions = JSON.stringify(data);
-
-        Axios.put(
-          `http://localhost:8000/api/workflows/${diagramToSave.id}`,
-          diagramToSave
-        ).finally(() => {
-          this.isSaving = false;
-        });
-      } catch (err) {
-        console.log(err);
-        this.isSaving = false;
-      }
+      const newDiagram = cloneDeep(this.diagemRef);
+      newDiagram.data = cloneDeep(this.data);
+      this.saveDiagram(newDiagram);
     },
 
     rebuildRefs(diagram) {

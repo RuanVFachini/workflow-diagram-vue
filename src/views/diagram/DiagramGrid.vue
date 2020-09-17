@@ -30,8 +30,6 @@ import { mapGetters, mapMutations} from 'vuex'
 export default {
   name: "DiagramGrid",
 
-  props: ["update"],
-
   data() {
     return {
       isBusy: false,
@@ -55,7 +53,6 @@ export default {
           label: "Ações",
         },
       ],
-      items: [],
     };
   },
 
@@ -83,7 +80,7 @@ export default {
     },
 
     editData(row) {
-      let item = this.items.find((i) => i.id == row.item.id);
+      let item = this.diagrams.find((i) => i.id == row.item.id);
       this.$emit("edit", item);
     },
   }

@@ -28,6 +28,11 @@ export default new Vuex.Store({
       const i = state.diagrams.findIndex((i) => i.id == payload.item.id);
       state.diagrams.splice(i, 1);
     },
+    saveDiagram(state, payload) {
+      const i = state.diagrams.findIndex((i) => i.id == payload.id);
+      state.diagrams.splice(i, 1);
+      state.diagrams.push(payload);
+    },
   },
   actions: {
   },
