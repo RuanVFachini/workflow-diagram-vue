@@ -14,10 +14,10 @@
         @mousemove="$emit('move', $event)"
         @mouseup="$emit('unselect')"
         @mouseleave="$emit('unselect')"
+        @dblclick="$emit('edit-description', value)"
       >
         <p
           :style="styleP()"
-          v-b-tooltip.hover.bottom="'Double click to edit description'"
         >
           {{ value.title | upperCase }}
         </p>
@@ -32,7 +32,6 @@
               :scale="iconScale"
               :style="flagStyle()"
               @click="$emit('set-root', value)"
-              v-b-tooltip.hover.bottom="'Set this action to start'"
             ></b-icon>
           </li>
         </ul>
@@ -44,7 +43,6 @@
               icon="pencil"
               variant="primary"
               :scale="iconScale"
-              v-b-tooltip.hover.bottom="'Open action Edition'"
             ></b-icon>
           </li>
           <li class="list-item" :style="listItemStyle()">
@@ -54,7 +52,6 @@
               icon="subtract"
               variant="secondary"
               :scale="iconScale"
-              v-b-tooltip.hover.bottom="'Clone this action in diagram'"
             ></b-icon>
           </li>
           <li class="list-item" :style="listItemStyle()">
@@ -64,7 +61,6 @@
               icon="trash"
               variant="danger"
               :scale="iconScale"
-              v-b-tooltip.hover.bottom="'Remove this action from diagram'"
             ></b-icon>
           </li>
         </ul>
@@ -77,7 +73,6 @@
               type="checkbox"
               :style="inputStyle()"
               @click.prevent="$emit('click-port', cardParams(), 'input')"
-              v-b-tooltip.hover.bottom="'Connect this card input port with ...'"
             />
             <h5 :style="styleH5()">
               {{ "I" | upperCase }}
@@ -91,9 +86,6 @@
               type="checkbox"
               :style="alterputStyle()"
               @click.prevent="$emit('click-port', cardParams(), 'alterput')"
-              v-b-tooltip.hover.bottom="
-                'Connect this card alterput port with ...'
-              "
             />
             <h5 :style="styleH5()">
               {{ "A" | upperCase }}
@@ -110,9 +102,6 @@
               type="checkbox"
               :style="inputStyle()"
               @click.prevent="$emit('click-port', cardParams(), 'output')"
-              v-b-tooltip.hover.bottom="
-                'Connect this card output port with ...'
-              "
             />
           </div>
         </div>

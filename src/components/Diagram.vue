@@ -291,6 +291,10 @@ export default {
       this.diagram.actions.push(newAct);
     },
 
+    editActionDescription (act) {
+      console.log(act);
+    },
+
     checkRootAction() {
       let rootExist = false;
       this.diagram.actions.forEach((act) => {
