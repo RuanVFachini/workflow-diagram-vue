@@ -194,15 +194,20 @@ export default {
     },
 
     removeActionLinks(action) {
+      let dropLinks = []
       this.diagram.links.forEach((link) => {
         if (link.input && link.input.ref.name == action.name) {
-          this.dropLink(link.id);
-        } else if (link.output && link.output.ref.name == action.name) {
-          this.dropLink(link.id);
-        } else if (link.alterput && link.alterput.ref.name == action.name) {
-          this.dropLink(link.id);
+          dropLinks.push(link.id);
+        }
+        if (link.output && link.output.ref.name == action.name) {
+          dropLinks.push(link.id);
+        }
+        if (link.alterput && link.alterput.ref.name == action.name) {
+          dropLinks.push(link.id);
         }
       });
+
+      dropLinks.forEach(linkId => this.dropLink(linkId));
     },
 
     cloneAction(action) {

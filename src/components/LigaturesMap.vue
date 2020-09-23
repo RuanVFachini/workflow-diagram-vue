@@ -98,6 +98,10 @@ div.list-ligatures {
   margin: 0px;
 }
 
+.item-list-link:hover {
+  cursor: pointer;
+}
+
 .arrow-icon-list {
   height: 100%;
   margin: 0px;
