@@ -5,7 +5,12 @@
         <div class="diagram-menu">
           <b-nav pills>
             <b-button
-              class="btn btn-danger"
+              class="btn btn-secondary"
+              @click="goBack()"
+              >Voltar</b-button
+            >
+            <b-button
+              class="btn btn-danger ml-2"
               @click="clear"
               >Clear</b-button
             >
@@ -115,6 +120,11 @@ export default {
     getReferenceAction(diagram, actionName) {
       return diagram.actions.find((act) => act.name == actionName);
     },
+
+    goBack () {
+      this.onEdit = false;
+    }
+
   },
 };
 </script>
