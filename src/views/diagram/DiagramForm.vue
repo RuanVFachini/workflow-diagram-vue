@@ -1,6 +1,6 @@
 <template>
   <div class="crud-form">
-    <h3></h3>
+    <h4 class="mt-3 mb-2">Novo Diagrama</h4>
     <b-form @submit="onSubmit" v-if="show">
       <b-form-group>
         <b-form-input
