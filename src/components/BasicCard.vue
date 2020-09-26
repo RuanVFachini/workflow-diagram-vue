@@ -84,30 +84,7 @@ export default {
         height: this.height * this.scale,
         scale: "transform: scale(" + this.scale + ")",
       };
-    },
-
-    select(event) {
-      event.action = this.value;
-      this.$emit("select", event);
-    },
-
-    clickPort(event, type, port) {
-      let relX = event.target.getClientRects()[0].x - this.value.x;
-      let relY = event.target.getClientRects()[0].y - this.value.y;
-
-      relX -= this.origin.x;
-      relY -= this.origin.y;
-
-      const customEvent = {
-        action: this.value,
-        port: port,
-        posRel: {
-          x: relX,
-          y: relY,
-        },
-      };
-      this.$emit(`click-${type}`, customEvent);
-    },
+    }
   },
 };
 </script>
