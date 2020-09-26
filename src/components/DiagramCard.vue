@@ -10,15 +10,13 @@
         class="card-header"
         :style="cardHeaderStyle()"
         draggable="false"
-        @mousedown.prevent="select($event)"
+        @mousedown="select($event)"
         @mousemove="$emit('move', $event)"
         @mouseup="$emit('unselect')"
         @mouseleave="$emit('unselect')"
-        @dblclick="$emit('edit-description', value)"
+        @dblclick="enableTitleEdition()"
       >
-        <p
-          :style="styleP()"
-        >
+        <p :style="styleP()">
           {{ value.title | upperCase }}
         </p>
       </div>
@@ -116,6 +114,7 @@ import BasicCard from "./BasicCard";
 export default {
   extends: BasicCard,
   name: "DiagramCard",
+
   computed: {
     type: function() {
       let value = "three";
@@ -230,6 +229,11 @@ export default {
       };
     },
 
+    select(event) {
+      event.action = this.value;
+      this.$emit("select", event);
+    },
+
     flagStyle() {
       if (!this.value.input && !this.value.alterput) {
         return { display: "unset" };
@@ -242,6 +246,29 @@ export default {
         return "flag-fill";
       }
       return "flag";
+    },
+
+    enableTitleEdition() {
+      this.$emit('edit-title', this.value);
+    },
+
+    clickPort(event, type, port) {
+
+      let relX = event.target.getClientRects()[0].x - this.value.x;
+      let relY = event.target.getClientRects()[0].y - this.value.y;
+
+      relX -= this.origin.x;
+      relY -= this.origin.y;
+
+      const customEvent = {
+        action: this.value,
+        port: port,
+        posRel: {
+          x: relX,
+          y: relY,
+        },
+      };
+      this.$emit(`click-${type}`, customEvent);
     },
   },
 };

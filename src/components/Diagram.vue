@@ -67,10 +67,10 @@
         <slot></slot>
         <svg
           id="main-grid"
-          @mousedown.prevent="mouseDown($event)"
-          @mousemove.prevent="mouseMove($event)"
-          @mouseleave.prevent="unselect"
-          @mouseup.prevent="unselect"
+          @mousedown="mouseDown($event)"
+          @mousemove="mouseMove($event)"
+          @mouseleave="unselect"
+          @mouseup="unselect"
           @mousewheel="zoom"
         >
           <defs>
@@ -119,8 +119,14 @@
             @unselect="unselect"
             @click-port="setSelectedPort"
             @set-root="setRootAction"
-            @edit-description="editActionDescription"
+            @edit-title="editCardTitle($event)"
           />
+          <FormEditTitle
+            v-if="cardToEditTitle"
+            :card="cardToEditTitle"
+            @cancel="onCloseTitleEdition()"
+            @changed="onSavedTitleCard()"
+             />
           <LinkLine
             v-for="link in diagram.links"
             :key="link.id"
@@ -145,6 +151,7 @@
 import DiagramCard from "./DiagramCard";
 import LinkLine from "./LinkLine";
 import LigaturesMap from "./LigaturesMap";
+import FormEditTitle from "./FormEditTitle"
 import lodash from "lodash";
 
 export default {
@@ -156,6 +163,7 @@ export default {
     DiagramCard,
     LinkLine,
     LigaturesMap,
+    FormEditTitle
   },
 
   model: {
@@ -178,6 +186,7 @@ export default {
       },
       selectedLine: null,
       midleMouseBtnPress: false,
+      cardToEditTitle: null
     };
   },
 
@@ -538,7 +547,21 @@ export default {
       this.svg.x = 0;
       this.svg.y = 0;
     },
+
+    onCloseTitleEdition() {
+      this.cardToEditTitle = null
+    },
+
+    onSavedTitleCard() {
+      this.cardToEditTitle = null;
+    },
+
+    editCardTitle(card) {
+      this.cardToEditTitle = card;
+    }
   },
+
+  
 
   computed: {
     getSvgPosition() {
