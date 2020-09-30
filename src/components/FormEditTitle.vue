@@ -6,57 +6,59 @@
     :height="height"
   >
     <div class="edit-title">
-      <input v-model="titleText" >
+      <input v-model="titleText" />
       <button @click="$emit('cancel')" class="btn-cancel">Cancel</button>
-      <button @click="saveTitleEdition" class="btn-save" >Save</button>
+      <button @click="saveTitleEdition" class="btn-save">Save</button>
     </div>
   </foreignObject>
 </template>
 
 <script>
 export default {
-  name: 'FormEditTitle',
-  props: ['card'],
+  name: "FormEditTitle",
+  props: ["card"],
 
-  data () {
+  data() {
     return {
-      title: '',
+      title: "",
       width: 350,
-      height: 40
-    }
+      height: 40,
+    };
   },
 
   computed: {
     titleText: {
-      get () {
+      get() {
         return this.card.title;
       },
 
-      set (value) {
+      set(value) {
         this.title = value;
-      }
-    }
+      },
+    },
+  },
+
+  created() {
+    this.titleText = this.card.title;
   },
 
   methods: {
     position() {
       return {
         x: this.card.x,
-        y: this.card.y - 50
-      }
+        y: this.card.y - 50,
+      };
     },
 
     saveTitleEdition() {
-      this.card.title = this.title
-      this.$emit('changed')
-    }
-  }
-
-}
+      this.card.title = this.title;
+      this.$emit("changed");
+    },
+  },
+};
 </script>
 
 <style>
-
 .edit-title {
   display: flex;
   flex-direction: row;

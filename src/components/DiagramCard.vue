@@ -16,7 +16,11 @@
         @mouseleave="$emit('unselect')"
         @dblclick="enableTitleEdition()"
       >
-        <p :style="styleP()" v-d-tooltip="'Double click to edit description'">
+        <p
+          :style="styleP()"
+          class="card-title"
+          v-d-tooltip="'Clique duas vezes para editar o nome'"
+        >
           {{ value.title | upperCase }}
         </p>
       </div>
@@ -268,6 +272,9 @@ export default {
 </script>
 
 <style scoped>
+.card {
+  user-select: none;
+}
 .act-menu-right {
   list-style: none;
   display: flex;
