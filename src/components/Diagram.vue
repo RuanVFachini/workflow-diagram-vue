@@ -63,7 +63,6 @@
           id="main-grid"
           @mousedown="mouseDown($event)"
           @mousemove="mouseMove($event)"
-          @mouseleave="unselect"
           @mouseup="unselect"
           @mousewheel="zoom"
         >
@@ -183,8 +182,8 @@ export default {
     return {
       cardWidth: 250,
       cardHeight: 150,
-      prevPos: null,
-      onMove: null,
+      movingAction: null,
+      initialMovingActionPosition: null,
       stage: [],
       scale: 1,
       prevPanPos: null,
@@ -354,45 +353,52 @@ export default {
       if (event.button !== 0) {
         return;
       }
-      this.onMove = event.action;
-      this.onMove.select = true;
-      this.prevPos = {
-        x: event.x,
-        y: event.y,
+      this.movingAction = event.action;
+      this.movingAction.select = true;
+      this.movingActionInitialPos = {
+        x: this.movingAction.x,
+        y: this.movingAction.y,
+      };
+      this.movingActionClientPos = {
+        x: event.clientX,
+        y: event.clientY,
       };
     },
 
     unselect() {
-      if (this.onMove && this.onMove.select) {
-        this.onMove.select = false;
+      if (this.movingAction && this.movingAction.select) {
+        this.movingAction.select = false;
       }
 
-      this.onMove = null;
+      this.movingAction = null;
       this.onPan = false;
     },
 
     move(event) {
-      if (this.onMove == null) {
+      if (this.movingAction == null) {
         return;
       }
       this.moveAction(event);
-      this.prevPos.x = event.x;
-      this.prevPos.y = event.y;
     },
 
     moveAction(event) {
       const speed = 1 / this.scale;
-      let valueX = (event.x - this.prevPos.x) * speed;
-      let valueY = (event.y - this.prevPos.y) * speed;
-      if (this.onMove.x + valueX <= 0) {
-        this.onMove.x = 0;
+      const {
+        x: initialClientX,
+        y: initialClientY,
+      } = this.movingActionClientPos;
+      const { x: initialX, y: initialY } = this.movingActionInitialPos;
+      let valueX = (event.clientX - initialClientX) * speed;
+      let valueY = (event.clientY - initialClientY) * speed;
+      if (initialX + valueX <= 0) {
+        this.movingAction.x = 0;
       } else {
-        this.onMove.x += valueX;
+        this.movingAction.x = initialX + valueX;
       }
-      if (this.onMove.y + valueY <= 0) {
-        this.onMove.y = 0;
+      if (initialY + valueY <= 0) {
+        this.movingAction.y = 0;
       } else {
-        this.onMove.y += valueY;
+        this.movingAction.y = initialY + valueY;
       }
     },
 

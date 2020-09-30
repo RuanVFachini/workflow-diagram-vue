@@ -10,13 +10,15 @@
         class="card-header"
         :style="cardHeaderStyle()"
         draggable="false"
-        @mousedown="select($event)"
-        @mousemove="$emit('move', $event)"
-        @mouseup="$emit('unselect')"
-        @mouseleave="$emit('unselect')"
-        @dblclick="enableTitleEdition()"
+        @mousedown.self="startDragging"
+        @mouseup="stopDragging"
       >
-        <p :style="styleP()" v-d-tooltip="'Double click to edit description'">
+        <p
+          @dblclick.prevent="enableTitleEdition()"
+          :style="styleP()"
+          class="card-title"
+          v-d-tooltip="'Clique duas vezes para editar o nome'"
+        >
           {{ value.title | upperCase }}
         </p>
       </div>
@@ -109,6 +111,11 @@ export default {
   extends: BasicCard,
   name: "DiagramCard",
 
+  data: () => ({
+    documentMouseMove: null,
+    documentMouseUp: null,
+  }),
+
   computed: {
     type: function() {
       let value = "three";
@@ -128,7 +135,29 @@ export default {
       return 1.5 * this.scale;
     },
   },
+
+  created() {
+    this.documentMouseMove = this.moveDragging.bind(this);
+    this.documentMouseUp = this.stopDragging.bind(this);
+  },
+
   methods: {
+    startDragging(mouseEvent) {
+      this.select(mouseEvent);
+      document.addEventListener("mousemove", this.documentMouseMove);
+      document.addEventListener("mouseup", this.documentMouseUp);
+    },
+
+    moveDragging(mouseEvent) {
+      this.$emit("move", mouseEvent);
+    },
+
+    stopDragging() {
+      this.$emit("unselect");
+      document.removeEventListener("mousemove", this.documentMouseMove);
+      document.removeEventListener("mouseup", this.documentMouseUp);
+    },
+
     inputsStyle() {
       let width =
         this.type === "three" ? 33.33 : this.type === "two" ? 50 : 100;
@@ -268,6 +297,9 @@ export default {
 </script>
 
 <style scoped>
+.card {
+  user-select: none;
+}
 .act-menu-right {
   list-style: none;
   display: flex;

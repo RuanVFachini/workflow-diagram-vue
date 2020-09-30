@@ -30,8 +30,11 @@ export default {
     styleP() {
       return {
         "font-size": 10 * this.scale + "pt",
-        margin: "0px",
+        margin: "0 auto",
         color: "black",
+        width: "fit-content",
+        maxWidth: "50%",
+        cursor: "pointer",
         "font-weight": 600 * this.scale,
         "font-family":
           "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande','Lucida Sans Unicode', Geneva, Verdana, sans-serif",
@@ -84,7 +87,7 @@ export default {
         height: this.height * this.scale,
         scale: "transform: scale(" + this.scale + ")",
       };
-    }
+    },
   },
 };
 </script>
