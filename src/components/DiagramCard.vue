@@ -16,10 +16,7 @@
         @mouseleave="$emit('unselect')"
         @dblclick="enableTitleEdition()"
       >
-        <p
-          :style="styleP()"
-          v-b-tooltip.hover.bottom="'Double click to edit description'"
-        >
+        <p :style="styleP()" v-d-tooltip="'Double click to edit description'">
           {{ value.title | upperCase }}
         </p>
       </div>

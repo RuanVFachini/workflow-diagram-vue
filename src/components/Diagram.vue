@@ -114,14 +114,17 @@
             @click-port="setSelectedPort"
             @set-root="setRootAction"
             @edit-description="editActionDescription"
-            @show-tooltip="showTooltip"
+            @show-tooltip="showTooltip(action, $event)"
             @hide-tooltip="hideTooltip"
+            @edit-title="editCardTitle"
           />
           <DiagramTooltip
             v-for="tooltip in tooltips"
             :key="tooltip.message"
             :message="tooltip.message"
-            :position="tooltip.position"
+            :action="tooltip.action"
+            :cardWidth="cardWidth"
+            :cardHeight="cardHeight"
           />
           <FormEditTitle
             v-if="cardToEditTitle"
@@ -565,12 +568,16 @@ export default {
     editCardTitle(card) {
       this.cardToEditTitle = card;
     },
-    showTooltip(tooltipData) {
-      Vue.set(this.tooltipMap, tooltipData.message, tooltipData);
+    showTooltip(action, message) {
+      const tooltipData = {
+        message,
+        action,
+      };
+      Vue.set(this.tooltipMap, message, tooltipData);
     },
 
-    hideTooltip(tooltipData) {
-      Vue.set(this.tooltipMap, tooltipData.message, undefined);
+    hideTooltip(message) {
+      Vue.set(this.tooltipMap, message, undefined);
     },
   },
 
