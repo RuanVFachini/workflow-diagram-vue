@@ -33,6 +33,7 @@ export default {
         margin: "0 auto",
         color: "black",
         width: "fit-content",
+        maxWidth: "50%",
         cursor: "pointer",
         "font-weight": 600 * this.scale,
         "font-family":

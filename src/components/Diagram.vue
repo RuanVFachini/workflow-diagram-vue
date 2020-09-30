@@ -63,7 +63,6 @@
           id="main-grid"
           @mousedown="mouseDown($event)"
           @mousemove="mouseMove($event)"
-          @mouseleave="unselect"
           @mouseup="unselect"
           @mousewheel="zoom"
         >
@@ -354,7 +353,6 @@ export default {
       if (event.button !== 0) {
         return;
       }
-      console.log(event);
       this.movingAction = event.action;
       this.movingAction.select = true;
       this.movingActionInitialPos = {
