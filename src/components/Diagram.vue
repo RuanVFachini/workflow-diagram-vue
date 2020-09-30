@@ -9,16 +9,14 @@
             v-b-tooltip.hover.right="
               'Move diagram grid to init position (x = 0, y = 0)'
             "
+            >Initial Position</b-list-group-item
           >
-            Initial Position
-          </b-list-group-item>
           <b-list-group-item
             class="sidebar-item"
             @click="Clear"
             v-b-tooltip.hover.right="'Clear diagram grid'"
+            >Clear</b-list-group-item
           >
-            Clear
-          </b-list-group-item>
           <b-list-group-item
             class="sidebar-item-drag"
             draggable="true"
@@ -26,9 +24,8 @@
             v-b-tooltip.hover.right="
               'Drop a action with input and output ports on diagram grid'
             "
+            >Two Ways</b-list-group-item
           >
-            Two Ways
-          </b-list-group-item>
           <b-list-group-item
             class="sidebar-item-drag"
             draggable="true"
@@ -36,9 +33,8 @@
             v-b-tooltip.hover.right="
               'Drop a action with input, output and alterput ports on diagram grid'
             "
+            >Three Ways</b-list-group-item
           >
-            Three Ways
-          </b-list-group-item>
           <b-list-group-item
             class="sidebar-item-drag"
             draggable="true"
@@ -46,9 +42,8 @@
             v-b-tooltip.hover.right="
               'Drop a action with oly a input port on diagram grid'
             "
+            >Single Way In</b-list-group-item
           >
-            Single Way In
-          </b-list-group-item>
           <b-list-group-item
             class="sidebar-item-drag"
             draggable="true"
@@ -56,9 +51,8 @@
             v-b-tooltip.hover.right="
               'Drop a action with oly a output port on diagram grid'
             "
+            >Single Way Out</b-list-group-item
           >
-            Single Way Out
-          </b-list-group-item>
         </b-list-group>
       </b-nav>
     </div>
@@ -119,14 +113,22 @@
             @unselect="unselect"
             @click-port="setSelectedPort"
             @set-root="setRootAction"
-            @edit-title="editCardTitle($event)"
+            @edit-description="editActionDescription"
+            @show-tooltip="showTooltip"
+            @hide-tooltip="hideTooltip"
+          />
+          <DiagramTooltip
+            v-for="tooltip in tooltips"
+            :key="tooltip.message"
+            :message="tooltip.message"
+            :position="tooltip.position"
           />
           <FormEditTitle
             v-if="cardToEditTitle"
             :card="cardToEditTitle"
             @cancel="onCloseTitleEdition()"
             @changed="onSavedTitleCard()"
-             />
+          />
           <LinkLine
             v-for="link in diagram.links"
             :key="link.id"
@@ -149,10 +151,12 @@
 
 <script>
 import DiagramCard from "./DiagramCard";
+import DiagramTooltip from "./DiagramTooltip";
 import LinkLine from "./LinkLine";
 import LigaturesMap from "./LigaturesMap";
-import FormEditTitle from "./FormEditTitle"
+import FormEditTitle from "./FormEditTitle";
 import lodash from "lodash";
+import Vue from "vue";
 
 export default {
   name: "Diagram",
@@ -161,9 +165,10 @@ export default {
 
   components: {
     DiagramCard,
+    DiagramTooltip,
     LinkLine,
     LigaturesMap,
-    FormEditTitle
+    FormEditTitle,
   },
 
   model: {
@@ -186,7 +191,8 @@ export default {
       },
       selectedLine: null,
       midleMouseBtnPress: false,
-      cardToEditTitle: null
+      cardToEditTitle: null,
+      tooltipMap: {},
     };
   },
 
@@ -203,7 +209,7 @@ export default {
     },
 
     removeActionLinks(action) {
-      let dropLinks = []
+      let dropLinks = [];
       this.diagram.links.forEach((link) => {
         if (link.input && link.input.ref.name == action.name) {
           dropLinks.push(link.id);
@@ -216,7 +222,11 @@ export default {
         }
       });
 
-      dropLinks.forEach(linkId => this.dropLink(linkId));
+      dropLinks.forEach((linkId) => this.dropLink(linkId));
+    },
+
+    editActionDescription(action) {
+      console.log(action);
     },
 
     cloneAction(action) {
@@ -303,10 +313,6 @@ export default {
       newAct.y = newAct.y > 0 ? newAct.y : 0;
 
       this.diagram.actions.push(newAct);
-    },
-
-    editActionDescription (act) {
-      console.log(act);
     },
 
     checkRootAction() {
@@ -549,7 +555,7 @@ export default {
     },
 
     onCloseTitleEdition() {
-      this.cardToEditTitle = null
+      this.cardToEditTitle = null;
     },
 
     onSavedTitleCard() {
@@ -558,14 +564,22 @@ export default {
 
     editCardTitle(card) {
       this.cardToEditTitle = card;
-    }
-  },
+    },
+    showTooltip(tooltipData) {
+      Vue.set(this.tooltipMap, tooltipData.message, tooltipData);
+    },
 
-  
+    hideTooltip(tooltipData) {
+      Vue.set(this.tooltipMap, tooltipData.message, undefined);
+    },
+  },
 
   computed: {
     getSvgPosition() {
       return `translate(${this.svg.x},${this.svg.y})`;
+    },
+    tooltips() {
+      return Object.values(this.tooltipMap).filter((value) => !!value);
     },
   },
 };
