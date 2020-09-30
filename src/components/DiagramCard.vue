@@ -16,7 +16,7 @@
         @mouseleave="$emit('unselect')"
         @dblclick="enableTitleEdition()"
       >
-        <p :style="styleP()">
+        <p :style="styleP()" v-d-tooltip="'Double click to edit description'">
           {{ value.title | upperCase }}
         </p>
       </div>
@@ -72,9 +72,7 @@
               :style="inputStyle()"
               @click.prevent="$emit('click-port', cardParams(), 'input')"
             />
-            <h5 :style="styleH5()">
-              {{ "I" | upperCase }}
-            </h5>
+            <h5 :style="styleH5()">{{ "I" | upperCase }}</h5>
           </div>
         </div>
         <div v-if="value.alterput" :style="alterputsStyle()">
@@ -85,16 +83,12 @@
               :style="alterputStyle()"
               @click.prevent="$emit('click-port', cardParams(), 'alterput')"
             />
-            <h5 :style="styleH5()">
-              {{ "A" | upperCase }}
-            </h5>
+            <h5 :style="styleH5()">{{ "A" | upperCase }}</h5>
           </div>
         </div>
         <div v-if="value.output" :style="outputsStyle()">
           <div class="output">
-            <h5 :style="styleH5()">
-              {{ "O" | upperCase }}
-            </h5>
+            <h5 :style="styleH5()">{{ "O" | upperCase }}</h5>
             <input
               class="link"
               type="checkbox"
@@ -249,11 +243,10 @@ export default {
     },
 
     enableTitleEdition() {
-      this.$emit('edit-title', this.value);
+      this.$emit("edit-title", this.value);
     },
 
     clickPort(event, type, port) {
-
       let relX = event.target.getClientRects()[0].x - this.value.x;
       let relY = event.target.getClientRects()[0].y - this.value.y;
 
