@@ -16,7 +16,20 @@
 <script>
 export default {
   name: "FormEditTitle",
-  props: ["card"],
+  props: {
+    card: {
+      type: Object,
+      required: true,
+    },
+    scale: {
+      type: Number,
+      required: true,
+    },
+    origin: {
+      type: Object,
+      required: true,
+    },
+  },
 
   data() {
     return {
@@ -44,9 +57,11 @@ export default {
 
   methods: {
     position() {
+      const xCoords = this.card.x + this.origin.x;
+      const yCoords = this.card.y + this.origin.y;
       return {
-        x: this.card.x,
-        y: this.card.y - 50,
+        x: xCoords * this.scale,
+        y: yCoords * this.scale - 50,
       };
     },
 

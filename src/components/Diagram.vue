@@ -124,10 +124,14 @@
             :action="tooltip.action"
             :cardWidth="cardWidth"
             :cardHeight="cardHeight"
+            :scale="scale"
+            :origin="svg"
           />
           <FormEditTitle
             v-if="cardToEditTitle"
             :card="cardToEditTitle"
+            :scale="scale"
+            :origin="svg"
             @cancel="onCloseTitleEdition()"
             @changed="onSavedTitleCard()"
           />
