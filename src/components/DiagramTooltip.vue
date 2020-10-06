@@ -2,7 +2,7 @@
   <foreignObject
     :x="tooltipPosition.x"
     :y="tooltipPosition.y"
-    :width="cardWidth"
+    :width="cardWidth * scale"
     :height="100"
   >
     <div class="diagram-tooltip">
@@ -30,12 +30,22 @@ export default {
       type: Number,
       required: true,
     },
+    scale: {
+      type: Number,
+      required: true,
+    },
+    origin: {
+      type: Object,
+      required: true,
+    },
   },
   computed: {
     tooltipPosition() {
+      const xCoords = this.action.x + this.origin.x;
+      const yCoords = this.action.y + this.origin.y + this.cardHeight + 10;
       return {
-        x: this.action.x,
-        y: this.action.y + this.cardHeight + 10,
+        x: xCoords * this.scale,
+        y: yCoords * this.scale,
       };
     },
   },
@@ -44,13 +54,14 @@ export default {
 <style scoped>
 /* Tooltip container */
 .diagram-tooltip {
-  padding: 4px 8px;
+  padding: 8px;
   background-color: rgba(0, 0, 0, 0.7);
   border-radius: 5px;
   text-align: center;
   width: fit-content;
   height: fit-content;
   margin: 0 auto;
+  line-height: 100%;
 }
 
 /* Tooltip text */
