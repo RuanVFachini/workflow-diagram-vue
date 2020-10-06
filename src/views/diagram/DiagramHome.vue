@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div v-if="onEdit" class="main-display">
-      <Diagram v-model="data" @edit-item="openEdit">
+      <Diagram v-model="data" @edit-item="openEdit" :zoomCfg="zoomPanelConfig" >
         <div class="diagram-menu">
           <b-nav pills>
             <b-button
@@ -53,6 +53,10 @@ export default {
         actions: [],
         links: [],
       },
+      zoomPanelConfig: {
+        width: 150,
+        height: 50
+      }
     };
   },
 

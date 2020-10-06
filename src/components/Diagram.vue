@@ -64,7 +64,7 @@
           @mousedown="mouseDown($event)"
           @mousemove="mouseMove($event)"
           @mouseup="unselect"
-          @mousewheel="zoom"
+          @mousewheel.prevent="zoom"
         >
           <defs>
             <pattern
@@ -143,6 +143,11 @@
             :origin="svg"
             @select-line="setSelectedLine($event)"
           />
+          <PanZoomPanel
+            :zoom="scale"
+            @zoomChange="updateZoom($event)"
+            :config="zoomCfg"
+          />
         </svg>
       </div>
       <LigaturesMap
@@ -161,13 +166,14 @@ import DiagramTooltip from "./DiagramTooltip";
 import LinkLine from "./LinkLine";
 import LigaturesMap from "./LigaturesMap";
 import FormEditTitle from "./FormEditTitle";
+import PanZoomPanel from './PanZoomPanel';
 import lodash from "lodash";
 import Vue from "vue";
 
 export default {
   name: "Diagram",
 
-  props: ["diagram"],
+  props: ["diagram", "zoomCfg"],
 
   components: {
     DiagramCard,
@@ -175,6 +181,7 @@ export default {
     LinkLine,
     LigaturesMap,
     FormEditTitle,
+    PanZoomPanel
   },
 
   model: {
@@ -589,6 +596,17 @@ export default {
     hideTooltip(message) {
       Vue.set(this.tooltipMap, message, undefined);
     },
+
+    updateZoom(operation) {
+      let event = {};
+      if (operation === 'plus') {
+        event = { wheelDelta: 0.5 }
+      } else {
+        event = { wheelDelta: -1 }
+      }
+      
+      this.zoom(event)
+    }
   },
 
   computed: {
