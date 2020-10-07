@@ -1,1 +1,0 @@
-python -m uvicorn fast-api-sql.main:app --reload
