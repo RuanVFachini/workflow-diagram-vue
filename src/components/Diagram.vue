@@ -144,6 +144,7 @@
             @select-line="setSelectedLine($event)"
           />
           <PanZoomPanel
+            v-if="showPamZoom"
             :zoom="scale"
             @zoomChange="updateZoom($event)"
             :config="zoomCfg"
@@ -191,6 +192,7 @@ export default {
 
   data() {
     return {
+      showPamZoom: false,
       cardWidth: 250,
       cardHeight: 150,
       movingAction: null,
@@ -207,6 +209,12 @@ export default {
       cardToEditTitle: null,
       tooltipMap: {},
     };
+  },
+
+  created () {
+    setTimeout(() => {
+      this.showPamZoom = true
+    }, 2000);
   },
 
   methods: {

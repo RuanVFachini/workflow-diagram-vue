@@ -55,7 +55,9 @@ export default {
       },
       zoomPanelConfig: {
         width: 150,
-        height: 50
+        height: 50,
+        scale: 1,
+        position: '1-0'
       }
     };
   },

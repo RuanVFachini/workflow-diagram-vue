@@ -53,7 +53,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
   </li>
   <li>
     <pre>zoomCfg: {
-      <strong>position: string</strong> | opções('1-1', '0-1', '1-0', '0-0')
+      <strong>position: string</strong> | <strong>ver leganda</strong>
       <strong>height: number</strong>   | em pixels
       <strong>widtht: number</strong>   | em pixels
       <strong>scale: number</strong>    | em decimal
@@ -61,6 +61,36 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
   </li>
 </ul>
 
+##### Legenda
+
+<table class="tabela">
+  <tr>
+    <th>Valor</th>
+    <th>Posição em X</th>
+    <th>Posição em Y</th>
+  </tr>
+  <tr>
+    <td>0-0</td>
+    <td>Esquerda</td>
+    <td>Cima</td>
+  </tr>
+  <tr>
+    <td>1-0</td>
+    <td>Direita</td>
+    <td>Cima</td>
+  </tr>
+  <tr>
+    <td>0-1</td>
+    <td>Esquesda</td>
+    <td>Baixo</td>
+  </tr>
+  <tr>
+    <td>1-1</td>
+    <td>Direita</td>
+    <td>Baixo</td>
+  </tr>
+</table>
+  
 #### Eventos
 
 <ul>
@@ -79,3 +109,20 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
     </pre>
   </li>
 </ul>
+
+
+<style>
+.tabela {
+  margin-left: 80px;
+}
+
+.tabela th {
+  text-align: center;
+  font-size: 12px;
+}
+
+.tabela td {
+  text-align: center;
+  font-size: 12px;
+}
+</style>
