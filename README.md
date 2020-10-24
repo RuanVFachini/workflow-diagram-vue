@@ -30,26 +30,23 @@ npm run lint
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-
-
 # Documentação:
 
-## componentes 
+## componentes
 
 ### Diagram
 
-````
+```
 <Diagram v-model="data" @edit-item="openEdit" :zoomCfg="zoomPanelConfig" >
-````
+```
 
 #### Parâmetros
-
 
 <div class="section">
   <ul>
     <li>
     <h5 class="titulo-parametro">Elemento principal do diagrama:</h5>
-    <p class="section-content">Entrada do array de cards e ligações do diagrama</p>
+    <p class="section-content">Entrada dos arrays de cards e ligações do diagrama</p>
     <pre>v-model: {
         <strong>actions: []</strong>  | lista de cards
         <strong>links: []</strong>    | lista de conexões
@@ -59,7 +56,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
       <h5 class="titulo-parametro">Display de zoom do diagrama:</h5>
       <p class="section-content">Parâmetros de entrada componente de zoom</p>
       <pre>zoomCfg: {
-        <strong>position: string</strong> | <strong>ver leganda</strong>
+        <strong>position: string</strong> | <strong>ver legenda</strong>
         <strong>height: number</strong>   | em pixels
         <strong>widtht: number</strong>   | em pixels
         <strong>scale: number</strong>    | em decimal
@@ -99,7 +96,6 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
     </table>
   </div>
 </div>
-
 
 #### Eventos
 
