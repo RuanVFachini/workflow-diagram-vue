@@ -1,6 +1,6 @@
 # drag-and-drop
 
-### url:https://ruanvfachini.github.io/drag-and-drop-vuejs/
+### url:https://ruanvfachini.github.io/workflow-diagram-vue/
 
 ## Project setup
 
